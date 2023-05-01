@@ -78,7 +78,7 @@ void EntityRoot::bindBuffers()
 //Dessine les objets
 void EntityRoot::drawEntity(uint programID)
 {
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glUniform1i(glGetUniformLocation(programID, "mode"), this->mode);
 	
 	this->InitBuffers();

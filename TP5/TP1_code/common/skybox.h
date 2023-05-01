@@ -18,7 +18,7 @@ public:
 
     skybox();
 
-    skybox(vector<string> faces, vector<vec3> skyboxVertices, vector<unsigned short> indices, int mode);
+    skybox(vector<vector<string>> faces, vector<vec3> skyboxVertices, vector<unsigned short> indices, int mode);
 
 };
 

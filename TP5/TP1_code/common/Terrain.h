@@ -17,7 +17,9 @@ public:
 
 	Terrain(vector<vec3> sommets, vector<unsigned short> indices, float offset, const string path, const string heightmap_path, int mode, uint programID);
 	
+	float FindMinZ();
 	float FindMaxZ();
+
 	
 	std::vector<glm::vec3> Vertices(int resolution, int taille, float offset);
 

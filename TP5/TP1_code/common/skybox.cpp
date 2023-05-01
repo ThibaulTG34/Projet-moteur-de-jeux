@@ -20,10 +20,13 @@
 using namespace std;
 using namespace glm;
 
-skybox::skybox(){}
+skybox::skybox() {}
 
-skybox::skybox(vector<string> faces, vector<vec3> skyboxVertices, vector<unsigned short> indices, int mode){
-    this->sk = loadSkybox(faces);
+skybox::skybox(vector<vector<string>> faces, vector<vec3> skyboxVertices, vector<unsigned short> indices, int mode)
+{
+    int rd = 0 + rand() % (faces.size() + 1);
+    std::cout << faces.size() << std::endl;
+    this->sk = loadSkybox(faces[3]);
     this->sommets = skyboxVertices;
     this->indices = indices;
 }
