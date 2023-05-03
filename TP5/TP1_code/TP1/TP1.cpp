@@ -79,6 +79,7 @@ glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
 
 cube Cube;
+cube Obstacle;
 
 std::vector<std::string> faces1 = {"arch/left.png", "arch/right.png",
                                    "arch/up.png", "arch/down.png",
@@ -107,6 +108,10 @@ std::vector<std::string> faces6 = {"skype/left.png", "skype/right.png",
 std::vector<std::string> faces7 = {"tron/left.png", "tron/right.png",
                                    "tron/up.png", "tron/down.png",
                                    "tron/front.png", "tron/back.png"};
+
+std::vector<std::string> faces8 = {"interstellar/left.png", "interstellar/right.png",
+                                   "interstellar/up.png", "interstellar/down.png",
+                                   "interstellar/front.png", "interstellar/back.png"};
 std::vector<glm::vec3> skVertices;
 vector<unsigned short> indices;
 
@@ -243,6 +248,7 @@ int main(void)
   faces.push_back(faces5);
   faces.push_back(faces6);
   faces.push_back(faces7);
+  faces.push_back(faces8);
   skybox SK(faces, skVertices, indices, 2);
   Racine.addChildren(SK);
 
@@ -254,7 +260,8 @@ int main(void)
   float offset = terrain1.FindMaxZ();
   Terrain terrain2(terrain1.sommets, terrain1.indices, offset, textureTerrain, heightmap, 1, programID);
   Terrain terrain3(terrain2.sommets, terrain2.indices, offset, textureTerrain, heightmap, 1, programID);
-  Cube = cube(1, 0.2, 0.2, 0.2);
+  Cube = cube(1, 0.2, 0.2, 0.2, 3);
+  Obstacle = cube(1, 0.2, 0.2, 0.2, 4);
   SK.addChildren(terrain1);
   terrain1.transform.updateTranslate(position_terrain_1);
 
@@ -262,9 +269,14 @@ int main(void)
   terrain2.addChildren(terrain3);
 
   Racine.addChildren(Cube);
-  Cube.transform.position = vec3(0.4, 0., 4.);
+  Racine.addChildren(Obstacle);
+
+  // Cube.transform.position = vec3(0.4, 0., 4.);
+  // Obstacle.transform.position = vec3(0.4, 0., 2.);
+
   position_cube = vec3(0.4, 0., 4.);
   Cube.transform.updateTranslate(vec3(0.4, 0., 4.));
+  Obstacle.transform.updateTranslate(vec3(0.4, 0., 2.));
 
   vec3 v1 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[1]];
   vec3 v2 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[2]];
@@ -280,6 +292,16 @@ int main(void)
   ViewMatrix = glm::mat4(1.f);
   ProjectionMatrix = glm::mat4(1.f);
   movePlan = false;
+
+  // ------ Normal MAP ------------
+  const char *file = "murNDG.png";
+  const char *normalMAP = "murNormal.png";
+  vec3 lightPos = {1., 1., 1.};
+  vec3 viewPos = {0., 0., 0.};
+  // Entity map = Entity();
+  // GLuint m_texture = map.loadTexture2DFromFilePath(file);
+  // normal_texture = loadTexture2DFromFilePath(normalMAP);
+  // ------------------------------
 
   do
   {
@@ -341,6 +363,14 @@ int main(void)
       Cube.transform.updateTranslate(vec3(0, speedVector.y * deltaTime, 0));
     }
 
+    if (Cube.Collision(Cube.transform.position, vec3(0.2, 0.2, 0.2), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    {
+      // Cube.transform.updateRotationZ(90.f);
+      // Cube.transform.updateTranslate(vec3(0, 0.2, 0));
+      // Cube.transform.updateTranslate(vec3(0, 0, 1));
+      // std::cout << Cube.Collision(Cube.transform.position, 1, Obstacle.transform.position, 1) << std::endl;
+    }
+
     glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0]);
 
@@ -370,11 +400,21 @@ void processInput(GLFWwindow *window)
   float cameraSpeed = static_cast<float>(2.5 * deltaTime);
 
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    cameraPosLibre -= cameraSpeed * cameraFront;
+  {
+    // cameraPosLibre -= cameraSpeed * cameraFront;
+    if (!Cube.Collision(Cube.transform.position, vec3(0.2, 0.2, 0.2), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    {
+      Cube.transform.updateTranslate(vec3(0, 0, 0.01));
+    }
+  }
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
   {
-    cameraPosLibre += cameraSpeed * cameraFront;
+    if (!Cube.Collision(Cube.transform.position, vec3(0.2, 0.2, 0.2), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    {
+      Cube.transform.updateTranslate(vec3(0, 0, -0.01));
+    }
+    // cameraPosLibre += cameraSpeed * cameraFront;
   }
 
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)

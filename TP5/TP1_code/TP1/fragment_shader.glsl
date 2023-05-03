@@ -17,8 +17,14 @@ void main(){
         if(mode==1){
                 FragColor = texture(textureID, UV);
         }
-        else{
+        else if (mode==2){
                 FragColor = texture(sktext, textCoords);
+        }
+        else if (mode==3){
+                FragColor = vec4(255.0, 0.0, 0.0, 1.0);
+        }
+        else{
+                FragColor = vec4(0.0, 255.0, 0.0, 1.0);
         }
         
         

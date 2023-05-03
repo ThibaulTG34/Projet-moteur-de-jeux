@@ -26,7 +26,8 @@ skybox::skybox(vector<vector<string>> faces, vector<vec3> skyboxVertices, vector
 {
     int rd = 0 + rand() % (faces.size() + 1);
     std::cout << faces.size() << std::endl;
-    this->sk = loadSkybox(faces[3]);
+    this->sk = loadSkybox(faces[7]);
     this->sommets = skyboxVertices;
     this->indices = indices;
+    this->mode = mode;
 }
