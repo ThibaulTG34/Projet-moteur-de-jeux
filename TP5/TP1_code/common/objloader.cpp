@@ -326,7 +326,7 @@ bool loadOFF( const std::string & filename ,
 
 
 
-#ifdef USE_ASSIMP // don't use this #define, it's only for me (it AssImp fails to compile on your machine, at least all the other tutorials still work)
+// #ifdef USE_ASSIMP // don't use this #define, it's only for me (it AssImp fails to compile on your machine, at least all the other tutorials still work)
 
 // Include AssImp
 #include <assimp/Importer.hpp>      // C++ importer interface
@@ -336,9 +336,7 @@ bool loadOFF( const std::string & filename ,
 bool loadAssImp(
         const char * path,
         std::vector<unsigned short> & indices,
-        std::vector<glm::vec3> & vertices,
-        std::vector<glm::vec2> & uvs,
-        std::vector<glm::vec3> & normals
+        std::vector<glm::vec3> & vertices
         ){
 
     Assimp::Importer importer;
@@ -359,18 +357,18 @@ bool loadAssImp(
     }
 
     // Fill vertices texture coordinates
-    uvs.reserve(mesh->mNumVertices);
-    for(unsigned int i=0; i<mesh->mNumVertices; i++){
-        aiVector3D UVW = mesh->mTextureCoords[0][i]; // Assume only 1 set of UV coords; AssImp supports 8 UV sets.
-        uvs.push_back(glm::vec2(UVW.x, UVW.y));
-    }
+    // uvs.reserve(mesh->mNumVertices);
+    // for(unsigned int i=0; i<mesh->mNumVertices; i++){
+    //     aiVector3D UVW = mesh->mTextureCoords[0][i]; // Assume only 1 set of UV coords; AssImp supports 8 UV sets.
+    //     uvs.push_back(glm::vec2(UVW.x, UVW.y));
+    // }
 
-    // Fill vertices normals
-    normals.reserve(mesh->mNumVertices);
-    for(unsigned int i=0; i<mesh->mNumVertices; i++){
-        aiVector3D n = mesh->mNormals[i];
-        normals.push_back(glm::vec3(n.x, n.y, n.z));
-    }
+    // // Fill vertices normals
+    // normals.reserve(mesh->mNumVertices);
+    // for(unsigned int i=0; i<mesh->mNumVertices; i++){
+    //     aiVector3D n = mesh->mNormals[i];
+    //     normals.push_back(glm::vec3(n.x, n.y, n.z));
+    // }
 
 
     // Fill face indices
@@ -386,4 +384,4 @@ bool loadAssImp(
     return true;
 }
 
-#endif
+// #endif

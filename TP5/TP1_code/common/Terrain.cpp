@@ -26,7 +26,7 @@ Terrain::Terrain(int resolution, int taille, float offset, const string path, co
     this->texture = loadTexture2DFromFilePath(path);
     this->uvs = this->compute_uv(this->sommets);
     this->mode = 1;
-    this->heightmap = loadTexture2DFromFilePath(heightmap_path);
+    this->normal_texture = loadTexture2DFromFilePath(heightmap_path);
     this->triangles = this->Triangles(this->indices);
 }
 

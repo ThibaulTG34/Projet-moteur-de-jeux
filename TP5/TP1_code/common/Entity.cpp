@@ -23,24 +23,32 @@ using namespace std;
 #include "Entity.h"
 #include "texture.hpp"
 
-//Constructeur par defaut
-Entity::Entity(){}
+// Constructeur par defaut
+Entity::Entity() {}
 
-//Constructeur 1
-Entity::Entity(const string path, const string textpath)
+// Constructeur 1
+Entity::Entity(const string path, const string textpath, int loading)
 {
-	loadOFF(path, this->sommets, this->indices, this->triangles);
-	this->texture = loadTexture2DFromFilePath(textpath);
-	this->uvs = this->compute_uv(this->sommets);
-    
-    
+	if (loading == 0)
+	{
+		loadOFF(path, this->sommets, this->indices, this->triangles);
+		this->texture = loadTexture2DFromFilePath(textpath);
+		this->uvs = this->compute_uv(this->sommets);
+	}
+	else
+	{
+		this->texture = loadTexture2DFromFilePath(textpath);
+		loadAssImp(path.c_str(), this->indices, this->sommets);
+		// this->uvs = this->compute_uv(this->sommets);
+	}
 }
 
-vector<vec2> Entity::compute_uv(vector<vec3> vertices){
+vector<vec2> Entity::compute_uv(vector<vec3> vertices)
+{
 	vector<vec2> UVs;
-	for(unsigned int i=0; i<vertices.size(); i++)
+	for (unsigned int i = 0; i < vertices.size(); i++)
 	{
-		float u = 0.5 + atan(vertices[i].z, vertices[i].x) / (2*M_PI);
+		float u = 0.5 + atan(vertices[i].z, vertices[i].x) / (2 * M_PI);
 		float v = 0.5 + asin(vertices[i].y) / (M_PI);
 		UVs.push_back(vec2(u, v));
 	}

@@ -17,7 +17,7 @@ public:
 
 	Entity();
 
-	Entity(const string path, const string textpath);
+	Entity(const string path, const string textpath, int loading);
 
 	vector<vec2> compute_uv(vector<vec3> vertices);
 

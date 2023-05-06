@@ -19,7 +19,7 @@ public :
 	vector<vec2> heightmap_uvs;
 	std::vector<std::vector<unsigned short>> triangles;
 	Transform transform;
-	uint texture, heightmap, sk;
+	uint texture, heightmap, sk, normal_texture;
 	uint vertexbuffer, indexbuffer, uvbuffer;
 	EntityRoot* parent = nullptr;
 	vector<EntityRoot*> children;

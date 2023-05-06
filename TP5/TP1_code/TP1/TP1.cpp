@@ -81,6 +81,14 @@ glm::mat4 ProjectionMatrix;
 cube Cube;
 cube Obstacle;
 
+//------ Player ---------
+cube right_leg, left_leg;
+Sphere head;
+cube right_arm, left_arm;
+cube bust;
+bool keyPressed = false;
+// ----------------------
+
 std::vector<std::string> faces1 = {"arch/left.png", "arch/right.png",
                                    "arch/up.png", "arch/down.png",
                                    "arch/front.png", "arch/back.png"};
@@ -256,26 +264,81 @@ int main(void)
   string heightmap("Heightmap_Rocky.png");
   string cubepath("cube.off");
   string textureCube("mars.jpg");
-  Terrain terrain1(16, 4, 2, textureTerrain, heightmap, 1, programID);
+
+  const string file = "lava.jpeg";
+  const string normalMAP = "murNormal.png";
+
+  Terrain terrain1(16, 4, 2, file, normalMAP, 1, programID);
   float offset = terrain1.FindMaxZ();
-  Terrain terrain2(terrain1.sommets, terrain1.indices, offset, textureTerrain, heightmap, 1, programID);
-  Terrain terrain3(terrain2.sommets, terrain2.indices, offset, textureTerrain, heightmap, 1, programID);
+  Terrain terrain2(terrain1.sommets, terrain1.indices, offset + 2, textureTerrain, heightmap, 1, programID);
+  Terrain terrain3(terrain2.sommets, terrain2.indices, offset + 2, textureTerrain, heightmap, 1, programID);
   Cube = cube(1, 0.2, 0.2, 0.2, 3);
-  Obstacle = cube(1, 0.2, 0.2, 0.2, 4);
+  // Obstacle = cube(1, 0.2, 0.2, 0.2, 4);
   SK.addChildren(terrain1);
+
+  // -------- Player ---------
+  right_leg = cube(1, 0.05, 0.2, 0.05, 3);
+  left_leg = cube(1, 0.05, 0.2, 0.05, 3);
+  bust = cube(1, 0.1, 0.19, 0.1, 3);
+  left_arm = cube(1, 0.05, 0.2, 0.05, 4);
+  right_arm = cube(1, 0.05, 0.2, 0.05, 4);
+
+  Entity left_leg_transform = Entity();
+  Entity right_leg_transform = Entity();
+
+  head = Sphere("mars.jpg", 50, 50, 0.09);
+
   terrain1.transform.updateTranslate(position_terrain_1);
+
+
+  Entity character = Entity("character.obj", "lava.jpeg", 1);
 
   terrain1.addChildren(terrain2);
   terrain2.addChildren(terrain3);
 
-  Racine.addChildren(Cube);
+  // Racine.addChildren(Cube);
   Racine.addChildren(Obstacle);
+  // Racine.addChildren(right_leg);
+  // Racine.addChildren(left_leg);
+  // Racine.addChildren(bust);
+  // Racine.addChildren(left_arm);
+  // Racine.addChildren(right_arm);
+  // Racine.addChildren(head);
+  Racine.addChildren(character);
 
-  // Cube.transform.position = vec3(0.4, 0., 4.);
+  character.transform.updateScaling(vec3(0.05, 0.05, 0.05));
+
+  // bust.addChildren(left_arm);
+  // bust.addChildren(right_arm);
+  // bust.addChildren(left_leg_transform);
+  // bust.addChildren(right_leg_transform);
+  // left_leg_transform.addChildren(left_leg);
+  // right_leg_transform.addChildren(right_leg);
+  // bust.addChildren(head);
+
+  Cube.transform.position = vec3(0.4, 0., 4.);
+
   // Obstacle.transform.position = vec3(0.4, 0., 2.);
 
   position_cube = vec3(0.4, 0., 4.);
-  Cube.transform.updateTranslate(vec3(0.4, 0., 4.));
+  // std::cout << left_leg.sommets[3].x << ", " << left_leg.sommets[3].y << ", " << left_leg.sommets[3].z << std::endl;
+
+  // bust.transform.updateTranslate(vec3(0.4, 0.2, 4.));
+
+  // left_leg.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+  // right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2, 0.));
+
+  // left_arm.transform.updateTranslate(vec3(-0.05, 0.2, -0.05));
+  // right_arm.transform.updateTranslate(vec3(0.1, 0.2, -0.05));
+
+  // head.transform.updateTranslate(vec3(0.05, 0.28, 0.05));
+
+  // left_arm.transform.updateRotationX(90.f);
+  // right_arm.transform.updateRotationX(90.f);
+
+  // left_leg.transform.updateTranslate(vec3(0., 0., 0.));
+
+  // Cube.transform.updateTranslate(vec3(0.4, 0., 4.));
   Obstacle.transform.updateTranslate(vec3(0.4, 0., 2.));
 
   vec3 v1 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[1]];
@@ -294,11 +357,8 @@ int main(void)
   movePlan = false;
 
   // ------ Normal MAP ------------
-  const char *file = "murNDG.png";
-  const char *normalMAP = "murNormal.png";
-  vec3 lightPos = {1., 1., 1.};
-  vec3 viewPos = {0., 0., 0.};
-  // Entity map = Entity();
+
+  // Entity map = Entity(normalMAP, file);
   // GLuint m_texture = map.loadTexture2DFromFilePath(file);
   // normal_texture = loadTexture2DFromFilePath(normalMAP);
   // ------------------------------
@@ -319,6 +379,15 @@ int main(void)
 
     ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4 / (float)3, 0.1f, 100.f);
     ViewMatrix = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
+
+    // glEnable(GL_FOG);
+    // glEnable(GL_DEPTH_TEST);
+    // GLfloat fogColor[4] = {0.8f, 0.2f, 0.0f, 1.0f};
+
+    // glFogfv(GL_FOG_COLOR, fogColor);
+    // glFogi(GL_FOG_MODE, GL_LINEAR);
+    // glFogf(GL_FOG_START, 1.0f);
+    // glFogf(GL_FOG_END, 5.0f);
 
     Racine.updateSelfAndChild();
     Racine.drawEntity(programID);
@@ -348,6 +417,8 @@ int main(void)
       terrain3.InfinitePlane(3 * offset);
     }
 
+    // left_leg.transform.up
+
     if (collision)
     {
       vec3 velocity = speedVector + acceleration * deltaTime;
@@ -370,6 +441,12 @@ int main(void)
       // Cube.transform.updateTranslate(vec3(0, 0, 1));
       // std::cout << Cube.Collision(Cube.transform.position, 1, Obstacle.transform.position, 1) << std::endl;
     }
+
+    // if (keyPressed)
+    // {
+    //   left_leg_transform.transform.updateRotationX(20.f);
+    //   keyPressed = false;
+    // }
 
     glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0]);
@@ -397,24 +474,24 @@ void processInput(GLFWwindow *window)
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
-  float cameraSpeed = static_cast<float>(2.5 * deltaTime);
+  float cameraSpeed = static_cast<float>(3.5 * deltaTime);
 
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
   {
-    // cameraPosLibre -= cameraSpeed * cameraFront;
-    if (!Cube.Collision(Cube.transform.position, vec3(0.2, 0.2, 0.2), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
-    {
-      Cube.transform.updateTranslate(vec3(0, 0, 0.01));
-    }
+    cameraPosLibre -= cameraSpeed * cameraFront;
+    // if (!Cube.Collision(Cube.transform.position, vec3(0.2, 0.2, 0.2), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    // {
+    // Cube.transform.updateTranslate(vec3(0, 0, 0.01));
+    // }
   }
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
   {
-    if (!Cube.Collision(Cube.transform.position, vec3(0.2, 0.2, 0.2), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
-    {
-      Cube.transform.updateTranslate(vec3(0, 0, -0.01));
-    }
-    // cameraPosLibre += cameraSpeed * cameraFront;
+    // if (!Cube.Collision(Cube.transform.position, vec3(0.2, 0.2, 0.2), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    // {
+    //   Cube.transform.updateTranslate(vec3(0, 0, -0.01));
+    // }
+    cameraPosLibre += cameraSpeed * cameraFront;
   }
 
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -441,6 +518,19 @@ void processInput(GLFWwindow *window)
   if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
   {
     movePlan = true;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+  {
+    keyPressed = true;
+    angle = 20.f;
+    // keyPressed = false;
+  }
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+  {
+    keyPressed = true;
+    angle = -40.f;
+    // keyPressed = false;
   }
 }
 
