@@ -1,8 +1,8 @@
 external/glfw-3.1.2/tests/CMakeFiles/msaa.dir/__/deps/getopt.c.o: \
- /home/thibault/Documents/Projet-moteur-de-jeux_COPIE/TP5/TP1_code/external/glfw-3.1.2/deps/getopt.c \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glfw-3.1.2/deps/getopt.c \
  /usr/include/stdc-predef.h \
- /home/thibault/Documents/Projet-moteur-de-jeux_COPIE/TP5/TP1_code/external/glfw-3.1.2/deps/getopt.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h /usr/include/string.h \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glfw-3.1.2/deps/getopt.h \
+ /usr/lib/gcc/x86_64-linux-gnu/12/include/stddef.h /usr/include/string.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \

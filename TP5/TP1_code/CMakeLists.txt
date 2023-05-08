@@ -83,6 +83,8 @@ add_executable(TP1
 	common/Sphere.h
 	common/cube.cpp
 	common/cube.h
+	common/BBOX.cpp
+	common/BBOX.h
 	
         TP1/vertex_shader.glsl
         TP1/fragment_shader.glsl

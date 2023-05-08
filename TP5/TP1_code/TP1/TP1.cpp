@@ -27,6 +27,7 @@ using namespace std;
 #include <common/skybox.h>
 #include <common/vboindexer.hpp>
 #include <common/cube.h>
+#include <common/BBOX.h>
 
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -290,8 +291,14 @@ int main(void)
 
   terrain1.transform.updateTranslate(position_terrain_1);
 
-
   Entity character = Entity("character.obj", "lava.jpeg", 1);
+  BBOX bbox(character.sommets, vec3(0.1, 0.1, 0.1));
+  for(unsigned int i=0; i<bbox.sommets.size(); i++){
+    std::cout<<bbox.sommets[i].x<<" "<<bbox.sommets[i].y<<" "<<bbox.sommets[i].z<<std::endl;
+  }
+  character.addChildren(bbox);
+  character.transform.updateTranslate(vec3(0.5, 0., 4.));
+  character.transform.updateScaling(vec3(0.05, 0.05, 0.05));
 
   terrain1.addChildren(terrain2);
   terrain2.addChildren(terrain3);
@@ -306,7 +313,7 @@ int main(void)
   // Racine.addChildren(head);
   Racine.addChildren(character);
 
-  character.transform.updateScaling(vec3(0.05, 0.05, 0.05));
+ 
 
   // bust.addChildren(left_arm);
   // bust.addChildren(right_arm);

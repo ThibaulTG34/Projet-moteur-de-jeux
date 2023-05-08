@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/TP1.dir/TP1/TP1.cpp.o"
   "CMakeFiles/TP1.dir/TP1/TP1.cpp.o.d"
+  "CMakeFiles/TP1.dir/common/BBOX.cpp.o"
+  "CMakeFiles/TP1.dir/common/BBOX.cpp.o.d"
   "CMakeFiles/TP1.dir/common/Entity.cpp.o"
   "CMakeFiles/TP1.dir/common/Entity.cpp.o.d"
   "CMakeFiles/TP1.dir/common/EntityRoot.cpp.o"
