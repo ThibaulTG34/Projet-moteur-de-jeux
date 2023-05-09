@@ -18,6 +18,7 @@
 using namespace glm;
 
 #include "EntityRoot.h"
+#include "BBOX.h"
 
 EntityRoot::EntityRoot()
 {
@@ -125,6 +126,7 @@ void EntityRoot::drawEntity(uint programID)
 	glDisableVertexAttribArray(0);
 	for (unsigned int i = 0; i < this->children.size(); i++)
 	{
+
 		children[i]->drawEntity(programID);
 	}
 }

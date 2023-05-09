@@ -50,13 +50,13 @@ vec3 position_terrain_1 = vec3(2., 0., 0.);
 vec3 position_terrain_2 = vec3(2., 0., 0.);
 vec3 position_terrain_3 = vec3(2., 0., 0.);
 
-int poids_cube = 2;
+int poids_character = 2;
 
 float v0_angle = 45.0f;
-vec3 speedVector = vec3(2 * cos(v0_angle), 2 * sin(v0_angle), 0.);
-vec3 gravite = vec3(0., -poids_cube * 9.81, 0.);
-vec3 acceleration = vec3(gravite.x / poids_cube, gravite.y / poids_cube,
-                         gravite.z / poids_cube);
+vec3 speedVector = vec3(10 * cos(v0_angle), 10 * sin(v0_angle), 0.);
+vec3 gravite = vec3(0., -poids_character * 9.81, 0.);
+vec3 acceleration = vec3(gravite.x / poids_character, gravite.y / poids_character,
+                         gravite.z / poids_character);
 
 vec3 normale_au_terrain;
 
@@ -79,16 +79,8 @@ GLuint programID;
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
 
-cube Cube;
 cube Obstacle;
-
-//------ Player ---------
-cube right_leg, left_leg;
-Sphere head;
-cube right_arm, left_arm;
-cube bust;
-bool keyPressed = false;
-// ----------------------
+Entity character;
 
 std::vector<std::string> faces1 = {"arch/left.png", "arch/right.png",
                                    "arch/up.png", "arch/down.png",
@@ -124,7 +116,7 @@ std::vector<std::string> faces8 = {"interstellar/left.png", "interstellar/right.
 std::vector<glm::vec3> skVertices;
 vector<unsigned short> indices;
 
-vec3 position_cube;
+vec3 position_character;
 bool movePlan;
 
 int main(void)
@@ -273,80 +265,31 @@ int main(void)
   float offset = terrain1.FindMaxZ();
   Terrain terrain2(terrain1.sommets, terrain1.indices, offset + 2, textureTerrain, heightmap, 1, programID);
   Terrain terrain3(terrain2.sommets, terrain2.indices, offset + 2, textureTerrain, heightmap, 1, programID);
-  Cube = cube(1, 0.2, 0.2, 0.2, 3);
-  // Obstacle = cube(1, 0.2, 0.2, 0.2, 4);
+  Obstacle = cube(1, 0.2, 0.2, 0.2, 4);
   SK.addChildren(terrain1);
 
-  // -------- Player ---------
-  right_leg = cube(1, 0.05, 0.2, 0.05, 3);
-  left_leg = cube(1, 0.05, 0.2, 0.05, 3);
-  bust = cube(1, 0.1, 0.19, 0.1, 3);
-  left_arm = cube(1, 0.05, 0.2, 0.05, 4);
-  right_arm = cube(1, 0.05, 0.2, 0.05, 4);
-
-  Entity left_leg_transform = Entity();
-  Entity right_leg_transform = Entity();
-
-  head = Sphere("mars.jpg", 50, 50, 0.09);
+ 
 
   terrain1.transform.updateTranslate(position_terrain_1);
 
-  Entity character = Entity("character.obj", "lava.jpeg", 1);
+  character = Entity("character.obj", "lava.jpeg", 1);
   BBOX bbox(character.sommets, vec3(0.1, 0.1, 0.1));
   for(unsigned int i=0; i<bbox.sommets.size(); i++){
     std::cout<<bbox.sommets[i].x<<" "<<bbox.sommets[i].y<<" "<<bbox.sommets[i].z<<std::endl;
   }
-  character.addChildren(bbox);
-  character.transform.updateTranslate(vec3(0.5, 0., 4.));
+  position_character = vec3(0.5, 0., 4.);
+  character.transform.updateTranslate(position_character);
   character.transform.updateScaling(vec3(0.05, 0.05, 0.05));
 
+  SK.addChildren(bbox);
+
+  Racine.addChildren(Obstacle);
   terrain1.addChildren(terrain2);
   terrain2.addChildren(terrain3);
 
-  // Racine.addChildren(Cube);
-  Racine.addChildren(Obstacle);
-  // Racine.addChildren(right_leg);
-  // Racine.addChildren(left_leg);
-  // Racine.addChildren(bust);
-  // Racine.addChildren(left_arm);
-  // Racine.addChildren(right_arm);
-  // Racine.addChildren(head);
-  Racine.addChildren(character);
+  bbox.addChildren(character);
 
- 
-
-  // bust.addChildren(left_arm);
-  // bust.addChildren(right_arm);
-  // bust.addChildren(left_leg_transform);
-  // bust.addChildren(right_leg_transform);
-  // left_leg_transform.addChildren(left_leg);
-  // right_leg_transform.addChildren(right_leg);
-  // bust.addChildren(head);
-
-  Cube.transform.position = vec3(0.4, 0., 4.);
-
-  // Obstacle.transform.position = vec3(0.4, 0., 2.);
-
-  position_cube = vec3(0.4, 0., 4.);
-  // std::cout << left_leg.sommets[3].x << ", " << left_leg.sommets[3].y << ", " << left_leg.sommets[3].z << std::endl;
-
-  // bust.transform.updateTranslate(vec3(0.4, 0.2, 4.));
-
-  // left_leg.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
-  // right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2, 0.));
-
-  // left_arm.transform.updateTranslate(vec3(-0.05, 0.2, -0.05));
-  // right_arm.transform.updateTranslate(vec3(0.1, 0.2, -0.05));
-
-  // head.transform.updateTranslate(vec3(0.05, 0.28, 0.05));
-
-  // left_arm.transform.updateRotationX(90.f);
-  // right_arm.transform.updateRotationX(90.f);
-
-  // left_leg.transform.updateTranslate(vec3(0., 0., 0.));
-
-  // Cube.transform.updateTranslate(vec3(0.4, 0., 4.));
-  Obstacle.transform.updateTranslate(vec3(0.4, 0., 2.));
+  Obstacle.transform.updateTranslate(vec3(0.5, 0., -2.));
 
   vec3 v1 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[1]];
   vec3 v2 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[2]];
@@ -411,49 +354,41 @@ int main(void)
     float maX2 = terrain2.FindMinZ();
     float maX3 = terrain3.FindMinZ();
 
-    if ((maX1) > Cube.transform.position.z)
-    {
-      terrain1.InfinitePlane(3 * offset);
-    }
-    if ((maX2) > Cube.transform.position.z)
-    {
-      terrain2.InfinitePlane(3 * offset);
-    }
-    if ((maX3) > Cube.transform.position.z)
-    {
-      terrain3.InfinitePlane(3 * offset);
-    }
-
-    // left_leg.transform.up
+    // if ((maX1) > character.transform.position.z)
+    // {
+    //   terrain1.InfinitePlane(3 * offset);
+    // }
+    // if ((maX2) > character.transform.position.z)
+    // {
+    //   terrain2.InfinitePlane(3 * offset);
+    // }
+    // if ((maX3) > character.transform.position.z)
+    // {
+    //   terrain3.InfinitePlane(3 * offset);
+    // }
 
     if (collision)
     {
       vec3 velocity = speedVector + acceleration * deltaTime;
-      position_cube = position_cube + speedVector * deltaTime + acceleration * deltaTime * deltaTime;
+      position_character = position_character + speedVector * deltaTime + acceleration * deltaTime * deltaTime;
       speedVector = velocity;
-      if (position_cube.y < terrain1.sommets[0][1] || position_cube.y < terrain2.sommets[0][1] || position_cube.y < terrain3.sommets[0][1])
+      if (position_character.y < terrain1.sommets[0][1] || position_character.y < terrain2.sommets[0][1] || position_character.y < terrain3.sommets[0][1])
       {
         speedVector = vec3(0., 0., 0.);
         // speedVector = speedVector - 2 * dot(normale_au_terrain, speedVector) * normale_au_terrain;
-        position_cube = vec3(position_cube.x, 0., position_cube.z);
+        position_character = vec3(position_character.x, 0., position_character.z);
       }
 
-      Cube.transform.updateTranslate(vec3(0, speedVector.y * deltaTime, 0));
+      character.transform.updateTranslate(vec3(0, speedVector.y * deltaTime, 0));
     }
 
-    if (Cube.Collision(Cube.transform.position, vec3(0.2, 0.2, 0.2), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    if (bbox.Collision(character.transform.position, vec3(0.05, 0.05, 0.05), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
     {
-      // Cube.transform.updateRotationZ(90.f);
-      // Cube.transform.updateTranslate(vec3(0, 0.2, 0));
+      character.transform.updateRotationZ(90.f);
+      //transform.updateTranslate(vec3(0, 0.2, 0));
       // Cube.transform.updateTranslate(vec3(0, 0, 1));
       // std::cout << Cube.Collision(Cube.transform.position, 1, Obstacle.transform.position, 1) << std::endl;
     }
-
-    // if (keyPressed)
-    // {
-    //   left_leg_transform.transform.updateRotationX(20.f);
-    //   keyPressed = false;
-    // }
 
     glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0]);
@@ -502,12 +437,10 @@ void processInput(GLFWwindow *window)
   }
 
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    cameraPosLibre -=
-        glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    cameraPosLibre -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    cameraPosLibre +=
-        glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    cameraPosLibre += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 
   if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
     cameraPosLibre += cameraSpeed * cameraUp;
@@ -518,8 +451,8 @@ void processInput(GLFWwindow *window)
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
   {
     collision = true;
-    speedVector = vec3(0., 2 * sin(v0_angle), -2 * cos(v0_angle));
-    position_cube = Cube.transform.position;
+    speedVector = vec3(0., 10 * sin(v0_angle), -10 * cos(v0_angle));
+    position_character = character.transform.position;
   }
 
   if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
@@ -529,15 +462,24 @@ void processInput(GLFWwindow *window)
 
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
   {
-    keyPressed = true;
-    angle = 20.f;
-    // keyPressed = false;
+    character.transform.updateTranslate(vec3(0., 0., -0.3));
+    position_character = character.transform.position;
   }
   if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
   {
-    keyPressed = true;
-    angle = -40.f;
-    // keyPressed = false;
+    character.transform.updateTranslate(vec3(0., 0., +0.3));
+    position_character = character.transform.position;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+  {
+    character.transform.updateTranslate(vec3(-0.2, 0., 0.));
+    position_character = character.transform.position;
+  }
+  if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+  {
+    character.transform.updateTranslate(vec3(+0.2, 0., 0.));
+    position_character = character.transform.position;
   }
 }
 

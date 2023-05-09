@@ -139,3 +139,20 @@ vector<unsigned short> BBOX::computeBBOXIndices(){
 
 }
 
+bool BBOX::Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2)
+{
+    // Calculate the distances between each pair of opposite faces
+    float dx = abs(pos2.x - pos1.x) - (size1.x + size2.x) / 2;
+    float dy = abs(pos2.y - pos1.y) - (size1.y + size2.y) / 2;
+    float dz = abs(pos2.z - pos1.z) - (size1.z + size2.z) / 2;
+
+    // If any distance is negative, the cubes are colliding
+    if (dx < 0 && dy < 0 && dz < 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

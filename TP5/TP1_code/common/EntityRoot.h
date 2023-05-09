@@ -10,7 +10,6 @@ using namespace glm;
 
 #include "Transform.h"
 
-
 class EntityRoot
 {
 public :

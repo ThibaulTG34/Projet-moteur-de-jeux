@@ -25,6 +25,8 @@ public:
     vector<vec3> computeBBOXVertices(vec3 bbMin, vec3 bbMax);
 
     vector<unsigned short> computeBBOXIndices();
+
+    bool Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2);
 };
 
 #endif

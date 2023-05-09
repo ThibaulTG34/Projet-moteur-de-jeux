@@ -278,4 +278,5 @@ CMakeFiles/TP1.dir/common/EntityRoot.cpp.o: \
  /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glm-0.9.7.1/glm/gtc/matrix_transform.hpp \
  /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glm-0.9.7.1/glm/gtc/matrix_transform.inl \
  /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/common/EntityRoot.h \
- /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/common/Transform.h
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/common/Transform.h \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/common/BBOX.h

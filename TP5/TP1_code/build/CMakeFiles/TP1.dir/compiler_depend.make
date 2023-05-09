@@ -1304,7 +1304,8 @@ CMakeFiles/TP1.dir/common/EntityRoot.cpp.o: ../common/EntityRoot.cpp \
   ../external/glm-0.9.7.1/glm/gtc/matrix_transform.hpp \
   ../external/glm-0.9.7.1/glm/gtc/matrix_transform.inl \
   ../common/EntityRoot.h \
-  ../common/Transform.h
+  ../common/Transform.h \
+  ../common/BBOX.h
 
 CMakeFiles/TP1.dir/common/Sphere.cpp.o: ../common/Sphere.cpp \
   /usr/include/stdc-predef.h \
