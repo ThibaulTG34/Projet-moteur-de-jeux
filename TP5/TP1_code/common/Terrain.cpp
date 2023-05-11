@@ -140,7 +140,7 @@ std::vector<vec2> Terrain::compute_uv(vector<vec3> vertices)
     vector<vec2> UVs;
     for (unsigned int i = 0; i < vertices.size(); i++)
     {
-        UVs.push_back(vec2(vertices[i].x, vertices[i].z));
+        UVs.push_back(vec2(vertices[i].x, vertices[i].z/7));
     }
     return UVs;
 }

@@ -191,9 +191,15 @@ int main(void)
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
 
-  Shader ourShader("model_loading_vs.glsl", "model_loading_fs.glsl");
+  //Shader ourShader("model_loading_vs.glsl", "model_loading_fs.glsl");
 
-  Model ourModel("backpack/backpack.obj");
+  //Only load a Model
+  //Model ourModel("backpack/backpack.obj");
+
+  //Model + anim
+  //Model ourModel("Fast_Run/Fast_Run.dae");
+	//Animation runAnimation("Fast_Run/Fast_Run.dae",&ourModel);
+	//Animator animator(&runAnimation);
 
   float size = 30.f;
 
@@ -262,7 +268,7 @@ int main(void)
   skybox SK(faces, skVertices, indices, 2);
   Racine.addChildren(SK);
 
-  string textureTerrain("rock.png");
+  string textureTerrain("mur.jpg");
   string heightmap("Heightmap_Rocky.png");
   string cubepath("cube.off");
   string textureCube("mars.jpg");
@@ -270,7 +276,7 @@ int main(void)
   const string file = "lava.jpeg";
   const string normalMAP = "murNormal.png";
 
-  Terrain terrain1(16, 4, 2, file, normalMAP, 1, programID);
+  Terrain terrain1(16, 4, 2, textureTerrain, heightmap, 1, programID);
   float offset = terrain1.FindMaxZ();
   Terrain terrain2(terrain1.sommets, terrain1.indices, offset + 2, textureTerrain, heightmap, 1, programID);
   Terrain terrain3(terrain2.sommets, terrain2.indices, offset + 2, textureTerrain, heightmap, 1, programID);
@@ -386,8 +392,9 @@ int main(void)
     glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0]);
 
-    ourShader.use();
+    //ourShader.use();
 
+    /*For model loading
     // view/projection transformations
     glm::mat4 projection = glm::perspective(glm::radians(fov), (float)4 / (float)3, 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
@@ -399,7 +406,27 @@ int main(void)
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
     model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
     ourShader.setMat4("model", model);
-    ourModel.Draw(ourShader);
+    ourModel.Draw(ourShader);*/
+
+    /*For model animation
+		// view/projection transformations
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+		ourShader.setMat4("projection", projection);
+		ourShader.setMat4("view", view);
+
+        auto transforms = animator.GetFinalBoneMatrices();
+		for (int i = 0; i < transforms.size(); ++i)
+			ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+
+		// render the loaded model
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
+		ourShader.setMat4("model", model);
+		ourModel.Draw(ourShader);*/
+
 
     glfwSwapBuffers(window);
     glfwPollEvents();

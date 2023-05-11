@@ -88,8 +88,13 @@ add_executable(TP1
 	common/Mesh.h
 	common/Shader.h
 	common/Model.h
-	
-        TP1/vertex_shader.glsl
+	common/animation.h
+	common/animator.h
+	common/animdata.h
+	common/bone.h
+	common/assimp_glm_helpers.h
+
+		TP1/vertex_shader.glsl
         TP1/fragment_shader.glsl
 )
 target_link_libraries(TP1

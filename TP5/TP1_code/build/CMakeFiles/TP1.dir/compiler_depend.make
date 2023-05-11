@@ -380,8 +380,6 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: ../TP1/TP1.cpp \
   /usr/include/assimp/anim.h \
   /usr/include/assimp/metadata.h \
   /usr/include/assimp/postprocess.h \
-  ../common/Mesh.h \
-  ../common/Shader.h \
   /usr/include/c++/12/map \
   /usr/include/c++/12/bits/stl_tree.h \
   /usr/include/c++/12/ext/aligned_buffer.h \
@@ -390,7 +388,13 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: ../TP1/TP1.cpp \
   /usr/include/c++/12/tuple \
   /usr/include/c++/12/bits/uses_allocator.h \
   /usr/include/c++/12/bits/stl_multimap.h \
-  /usr/include/c++/12/bits/erase_if.h
+  /usr/include/c++/12/bits/erase_if.h \
+  ../common/Shader.h \
+  ../common/Mesh.h \
+  ../common/assimp_glm_helpers.h \
+  ../external/glm-0.9.7.1/glm/gtc/quaternion.hpp \
+  ../external/glm-0.9.7.1/glm/gtc/quaternion.inl \
+  ../common/animdata.h
 
 CMakeFiles/TP1.dir/common/BBOX.cpp.o: ../common/BBOX.cpp \
   /usr/include/stdc-predef.h \
@@ -4237,6 +4241,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 ../external/glm-0.9.7.1/glm/gtc/quaternion.hpp:
 
+../common/Mesh.h:
+
 /usr/include/c++/12/bits/erase_if.h:
 
 /usr/include/c++/12/bits/stl_multimap.h:
@@ -4246,8 +4252,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 /usr/include/c++/12/bits/stl_map.h:
 
 /usr/include/c++/12/bits/stl_tree.h:
-
-../common/Mesh.h:
 
 /usr/include/assimp/postprocess.h:
 
@@ -4597,6 +4601,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/c++/12/tr1/special_function_util.h:
 
+../common/animdata.h:
+
 /usr/include/c++/12/bits/stl_iterator_base_funcs.h:
 
 /usr/include/pthread.h:
@@ -4670,6 +4676,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
+
+../common/assimp_glm_helpers.h:
 
 ../external/glm-0.9.7.1/glm/mat3x3.hpp:
 
