@@ -28,6 +28,8 @@ using namespace std;
 #include <common/vboindexer.hpp>
 #include <common/cube.h>
 #include <common/BBOX.h>
+#include <common/Shader.h>
+#include <common/Model.h>
 
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -49,6 +51,8 @@ bool collision = false;
 vec3 position_terrain_1 = vec3(2., 0., 0.);
 vec3 position_terrain_2 = vec3(2., 0., 0.);
 vec3 position_terrain_3 = vec3(2., 0., 0.);
+
+vec3 position_bbox = vec3(0.5, 0., 4.5);
 
 int poids_character = 2;
 
@@ -81,6 +85,7 @@ glm::mat4 ProjectionMatrix;
 
 cube Obstacle;
 Entity character;
+BBOX bbox;
 
 std::vector<std::string> faces1 = {"arch/left.png", "arch/right.png",
                                    "arch/up.png", "arch/down.png",
@@ -186,6 +191,10 @@ int main(void)
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
 
+  Shader ourShader("model_loading_vs.glsl", "model_loading_fs.glsl");
+
+  Model ourModel("backpack/backpack.obj");
+
   float size = 30.f;
 
   skVertices.push_back(vec3(-size, size, size));
@@ -268,20 +277,16 @@ int main(void)
   Obstacle = cube(1, 0.2, 0.2, 0.2, 4);
   SK.addChildren(terrain1);
 
- 
+ terrain1.transform.updateTranslate(position_terrain_1);
 
-  terrain1.transform.updateTranslate(position_terrain_1);
+  character = Entity("homme.obj", "lava.jpeg", 1);
+  bbox = BBOX(character.sommets, vec3(0.1, 0.1, 0.1));
+  // bbox.addChildren(character);
 
-  character = Entity("character.obj", "lava.jpeg", 1);
-  BBOX bbox(character.sommets, vec3(0.1, 0.1, 0.1));
-  for(unsigned int i=0; i<bbox.sommets.size(); i++){
-    std::cout<<bbox.sommets[i].x<<" "<<bbox.sommets[i].y<<" "<<bbox.sommets[i].z<<std::endl;
-  }
-  position_character = vec3(0.5, 0., 4.);
-  character.transform.updateTranslate(position_character);
-  character.transform.updateScaling(vec3(0.05, 0.05, 0.05));
-
+  bbox.transform.updateTranslate(position_bbox);
+  bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
   SK.addChildren(bbox);
+  SK.addChildren(Obstacle);
 
   Racine.addChildren(Obstacle);
   terrain1.addChildren(terrain2);
@@ -289,7 +294,7 @@ int main(void)
 
   bbox.addChildren(character);
 
-  Obstacle.transform.updateTranslate(vec3(0.5, 0., -2.));
+  Obstacle.transform.updateTranslate(vec3(0.5, 0., -1.));
 
   vec3 v1 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[1]];
   vec3 v2 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[2]];
@@ -305,13 +310,6 @@ int main(void)
   ViewMatrix = glm::mat4(1.f);
   ProjectionMatrix = glm::mat4(1.f);
   movePlan = false;
-
-  // ------ Normal MAP ------------
-
-  // Entity map = Entity(normalMAP, file);
-  // GLuint m_texture = map.loadTexture2DFromFilePath(file);
-  // normal_texture = loadTexture2DFromFilePath(normalMAP);
-  // ------------------------------
 
   do
   {
@@ -329,15 +327,6 @@ int main(void)
 
     ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4 / (float)3, 0.1f, 100.f);
     ViewMatrix = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
-
-    // glEnable(GL_FOG);
-    // glEnable(GL_DEPTH_TEST);
-    // GLfloat fogColor[4] = {0.8f, 0.2f, 0.0f, 1.0f};
-
-    // glFogfv(GL_FOG_COLOR, fogColor);
-    // glFogi(GL_FOG_MODE, GL_LINEAR);
-    // glFogf(GL_FOG_START, 1.0f);
-    // glFogf(GL_FOG_END, 5.0f);
 
     Racine.updateSelfAndChild();
     Racine.drawEntity(programID);
@@ -370,21 +359,25 @@ int main(void)
     if (collision)
     {
       vec3 velocity = speedVector + acceleration * deltaTime;
-      position_character = position_character + speedVector * deltaTime + acceleration * deltaTime * deltaTime;
+      position_bbox = position_bbox + speedVector * deltaTime + acceleration * deltaTime * deltaTime;
       speedVector = velocity;
-      if (position_character.y < terrain1.sommets[0][1] || position_character.y < terrain2.sommets[0][1] || position_character.y < terrain3.sommets[0][1])
+      if (position_bbox.y < terrain1.sommets[0][1] || position_bbox.y < terrain2.sommets[0][1] || position_bbox.y < terrain3.sommets[0][1])
       {
         speedVector = vec3(0., 0., 0.);
         // speedVector = speedVector - 2 * dot(normale_au_terrain, speedVector) * normale_au_terrain;
-        position_character = vec3(position_character.x, 0., position_character.z);
+        position_bbox = vec3(position_bbox.x, 0., position_bbox.z);
       }
+      bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+      bbox.transform.updateTranslate(vec3(0, speedVector.y * deltaTime * 0.08, 0));
+      bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
 
-      character.transform.updateTranslate(vec3(0, speedVector.y * deltaTime, 0));
     }
 
-    if (bbox.Collision(character.transform.position, vec3(0.05, 0.05, 0.05), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    //cout<<bbox.transform.position.x<<" "<<bbox.transform.position.y<<" "<<bbox.transform.position.z<<endl;
+    if (bbox.Collision(bbox.transform.position, vec3(0.05, 0.05, 0.05), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
     {
-      character.transform.updateRotationZ(90.f);
+      bbox.transform.updateRotationZ(90.f);
+      //cout<<"COLLISION"<<endl;
       //transform.updateTranslate(vec3(0, 0.2, 0));
       // Cube.transform.updateTranslate(vec3(0, 0, 1));
       // std::cout << Cube.Collision(Cube.transform.position, 1, Obstacle.transform.position, 1) << std::endl;
@@ -392,6 +385,21 @@ int main(void)
 
     glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0]);
+
+    ourShader.use();
+
+    // view/projection transformations
+    glm::mat4 projection = glm::perspective(glm::radians(fov), (float)4 / (float)3, 0.1f, 100.0f);
+    glm::mat4 view = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
+    ourShader.setMat4("projection", projection);
+    ourShader.setMat4("view", view);
+
+    // render the loaded model
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+    ourShader.setMat4("model", model);
+    ourModel.Draw(ourShader);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -452,7 +460,7 @@ void processInput(GLFWwindow *window)
   {
     collision = true;
     speedVector = vec3(0., 10 * sin(v0_angle), -10 * cos(v0_angle));
-    position_character = character.transform.position;
+    position_bbox = bbox.transform.position;
   }
 
   if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
@@ -462,24 +470,33 @@ void processInput(GLFWwindow *window)
 
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
   {
-    character.transform.updateTranslate(vec3(0., 0., -0.3));
-    position_character = character.transform.position;
+    bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+    bbox.transform.updateTranslate(vec3(0., 0., -0.008));
+    bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));    
+    position_bbox = bbox.transform.position;
   }
   if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
   {
-    character.transform.updateTranslate(vec3(0., 0., +0.3));
-    position_character = character.transform.position;
+    bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+    bbox.transform.updateTranslate(vec3(0., 0., 0.008));
+    bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
+    position_bbox = bbox.transform.position;
   }
 
   if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
   {
-    character.transform.updateTranslate(vec3(-0.2, 0., 0.));
-    position_character = character.transform.position;
+    bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+    bbox.transform.updateTranslate(vec3(-0.008, 0., 0.));
+    bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
+    position_bbox = bbox.transform.position;
   }
   if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
   {
-    character.transform.updateTranslate(vec3(+0.2, 0., 0.));
-    position_character = character.transform.position;
+    bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+    bbox.transform.updateTranslate(vec3(+0.008, 0., 0.));
+    bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
+
+    position_bbox = bbox.transform.position;
   }
 }
 

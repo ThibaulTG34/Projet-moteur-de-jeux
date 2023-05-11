@@ -141,18 +141,25 @@ vector<unsigned short> BBOX::computeBBOXIndices(){
 
 bool BBOX::Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2)
 {
+    vec3 halfSize1 = vec3(size1.x/2, size1.y/2, size1.z/2);
+    vec3 halfSize2 = vec3(size2.x/2, size2.y/2, size2.z/2);
     // Calculate the distances between each pair of opposite faces
-    float dx = abs(pos2.x - pos1.x) - (size1.x + size2.x) / 2;
-    float dy = abs(pos2.y - pos1.y) - (size1.y + size2.y) / 2;
-    float dz = abs(pos2.z - pos1.z) - (size1.z + size2.z) / 2;
+    float dx = abs(pos1.x - pos2.x);
+    float dy = abs(pos1.y - pos2.y);
+    float dz = abs(pos1.z - pos2.z);
 
-    // If any distance is negative, the cubes are colliding
-    if (dx < 0 && dy < 0 && dz < 0)
-    {
-        return true;
+    // Vérifier si les cubes se chevauchent sur l'axe x
+    if (dx <= halfSize1.x + halfSize2.x) {
+        // Vérifier si les cubes se chevauchent sur l'axe y
+        if (dy <= halfSize1.y + halfSize2.y) {
+            // Vérifier si les cubes se chevauchent sur l'axe z
+            if (dz <= halfSize1.z + halfSize2.z) {
+                // Collision détectée
+                return true;
+            }
+        }
     }
-    else
-    {
-        return false;
-    }
+
+    // Pas de collision détectée
+    return false;
 }

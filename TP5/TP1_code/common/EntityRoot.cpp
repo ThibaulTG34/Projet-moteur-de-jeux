@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
+#include <typeinfo>
 
 // Include GLEW
 #include <GL/glew.h>
@@ -126,9 +127,13 @@ void EntityRoot::drawEntity(uint programID)
 	glDisableVertexAttribArray(0);
 	for (unsigned int i = 0; i < this->children.size(); i++)
 	{
-
+		if(typeid(children[i]).name() == "BBOX"){
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		//cout<<typeid(children[i]).name()<<endl;
 		children[i]->drawEntity(programID);
-	}
+		
+		}
 }
 
 void EntityRoot::clearBuffers()

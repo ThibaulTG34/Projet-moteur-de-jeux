@@ -16,6 +16,8 @@ void setDefaultTexture2DParameters(GLuint texture);
 
 GLuint loadTexture2DFromFilePath(const std::string &path);
 
+GLuint loadTextureFromFilePath(const std::string &path, const std::string directory);
+
 GLuint loadSkybox(std::vector<std::string> faces);
 
 #endif

@@ -328,7 +328,69 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: ../TP1/TP1.cpp \
   ../common/skybox.h \
   ../common/vboindexer.hpp \
   ../common/cube.h \
-  ../common/BBOX.h
+  ../common/BBOX.h \
+  ../common/Shader.h \
+  /usr/include/c++/12/fstream \
+  /usr/include/c++/12/bits/codecvt.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/c++io.h \
+  /usr/include/c++/12/bits/fstream.tcc \
+  /usr/include/c++/12/sstream \
+  /usr/include/c++/12/bits/sstream.tcc \
+  ../common/Model.h \
+  ../common/stb_image.h \
+  /usr/include/assimp/Importer.hpp \
+  /usr/include/assimp/types.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  /usr/include/assimp/defs.h \
+  /usr/include/assimp/config.h \
+  /usr/include/assimp/vector2.h \
+  /usr/include/assimp/vector3.h \
+  /usr/include/assimp/color4.h \
+  /usr/include/assimp/matrix3x3.h \
+  /usr/include/assimp/matrix4x4.h \
+  /usr/include/assimp/quaternion.h \
+  /usr/include/c++/12/cstring \
+  /usr/include/assimp/vector2.inl \
+  /usr/include/assimp/vector3.inl \
+  /usr/include/assimp/color4.inl \
+  /usr/include/assimp/matrix3x3.inl \
+  /usr/include/c++/12/algorithm \
+  /usr/include/c++/12/bits/stl_algo.h \
+  /usr/include/c++/12/bits/algorithmfwd.h \
+  /usr/include/c++/12/bits/stl_heap.h \
+  /usr/include/c++/12/bits/stl_tempbuf.h \
+  /usr/include/c++/12/bits/uniform_int_dist.h \
+  /usr/include/c++/12/pstl/glue_algorithm_defs.h \
+  /usr/include/c++/12/pstl/execution_defs.h \
+  /usr/include/assimp/matrix4x4.inl \
+  /usr/include/assimp/MathFunctions.h \
+  /usr/include/assimp/quaternion.inl \
+  /usr/include/assimp/scene.h \
+  /usr/include/assimp/texture.h \
+  /usr/include/assimp/Compiler/pushpack1.h \
+  /usr/include/assimp/Compiler/poppack1.h \
+  /usr/include/assimp/mesh.h \
+  /usr/include/assimp/aabb.h \
+  /usr/include/assimp/light.h \
+  /usr/include/assimp/camera.h \
+  /usr/include/assimp/material.h \
+  /usr/include/assimp/material.inl \
+  /usr/include/assimp/anim.h \
+  /usr/include/assimp/metadata.h \
+  /usr/include/assimp/postprocess.h \
+  ../common/Mesh.h \
+  ../common/Shader.h \
+  /usr/include/c++/12/map \
+  /usr/include/c++/12/bits/stl_tree.h \
+  /usr/include/c++/12/ext/aligned_buffer.h \
+  /usr/include/c++/12/bits/node_handle.h \
+  /usr/include/c++/12/bits/stl_map.h \
+  /usr/include/c++/12/tuple \
+  /usr/include/c++/12/bits/uses_allocator.h \
+  /usr/include/c++/12/bits/stl_multimap.h \
+  /usr/include/c++/12/bits/erase_if.h
 
 CMakeFiles/TP1.dir/common/BBOX.cpp.o: ../common/BBOX.cpp \
   /usr/include/stdc-predef.h \
@@ -4155,6 +4217,26 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
   /usr/include/strings.h
 
 
+../common/vboindexer.cpp:
+
+../common/objloader.cpp:
+
+../common/controls.hpp:
+
+/usr/include/KHR/khrplatform.h:
+
+/usr/include/GL/glext.h:
+
+../common/controls.cpp:
+
+../common/Terrain.cpp:
+
+../external/glm-0.9.7.1/glm/gtc/type_ptr.inl:
+
+../external/glm-0.9.7.1/glm/gtc/quaternion.inl:
+
+../external/glm-0.9.7.1/glm/gtc/quaternion.hpp:
+
 /usr/include/c++/12/bits/erase_if.h:
 
 /usr/include/c++/12/bits/stl_multimap.h:
@@ -4165,9 +4247,7 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/c++/12/bits/stl_tree.h:
 
-../common/vboindexer.cpp:
-
-/usr/include/c++/12/bits/sstream.tcc:
+../common/Mesh.h:
 
 /usr/include/assimp/postprocess.h:
 
@@ -4215,29 +4295,17 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/assimp/defs.h:
 
-/usr/include/c++/12/bits/fstream.tcc:
-
-../common/objloader.cpp:
-
-../common/controls.hpp:
-
-/usr/include/KHR/khrplatform.h:
-
-/usr/include/GL/glext.h:
-
-../common/controls.cpp:
-
-../common/Terrain.cpp:
-
-../external/glm-0.9.7.1/glm/gtc/type_ptr.inl:
-
 /usr/include/strings.h:
 
 /usr/include/string.h:
 
-../external/glm-0.9.7.1/glm/gtc/quaternion.inl:
+../common/Model.h:
 
-../external/glm-0.9.7.1/glm/gtc/quaternion.hpp:
+/usr/include/c++/12/bits/sstream.tcc:
+
+/usr/include/c++/12/bits/fstream.tcc:
+
+../common/Shader.h:
 
 ../common/vboindexer.hpp:
 

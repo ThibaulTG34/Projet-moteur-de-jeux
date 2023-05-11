@@ -247,7 +247,48 @@ GLuint loadTexture2DFromFilePath(const std::string &path)
         std::cout<<"error"<<std::endl;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	GLenum format;
+	if (nrChannels == 1)
+		format = GL_RED;
+	else if (nrChannels == 3)
+		format = GL_RGB;
+	else if (nrChannels == 4)
+		format = GL_RGBA;
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(data);
+    setDefaultTexture2DParameters(texture);
+    return texture;
+}
+
+GLuint loadTextureFromFilePath(const std::string &path, const std::string directory)
+{
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+	std::string filename = std::string(path);
+    filename = directory + '/' + filename;
+
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 3);
+
+    if (!data)
+    {
+        stbi_image_free(data);
+        std::cout<<"error"<<std::endl;
+    }
+
+	GLenum format;
+	if (nrChannels == 1)
+		format = GL_RED;
+	else if (nrChannels == 3)
+		format = GL_RGB;
+	else if (nrChannels == 4)
+		format = GL_RGBA;
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(data);
     setDefaultTexture2DParameters(texture);
