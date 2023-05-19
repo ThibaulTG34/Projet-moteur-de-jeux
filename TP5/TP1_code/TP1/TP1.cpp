@@ -30,6 +30,8 @@ using namespace std;
 #include <common/BBOX.h>
 #include <common/Shader.h>
 #include <common/Model.h>
+#include <common/animation.h>
+#include <common/animator.h>
 
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -191,15 +193,15 @@ int main(void)
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
 
-  //Shader ourShader("model_loading_vs.glsl", "model_loading_fs.glsl");
+  Shader ourShader("model_loading_vs.glsl", "model_loading_fs.glsl");
 
   //Only load a Model
   //Model ourModel("backpack/backpack.obj");
 
   //Model + anim
-  //Model ourModel("Fast_Run/Fast_Run.dae");
-	//Animation runAnimation("Fast_Run/Fast_Run.dae",&ourModel);
-	//Animator animator(&runAnimation);
+  // Model ourModel("vampire/dancing_vampire.dae");
+	// Animation runAnimation("vampire/dancing_vampire.dae", &ourModel);
+	// Animator animator(&runAnimation);
 
   float size = 30.f;
 
@@ -290,7 +292,7 @@ int main(void)
   // bbox.addChildren(character);
 
   bbox.transform.updateTranslate(position_bbox);
-  bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
+  bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
   SK.addChildren(bbox);
   SK.addChildren(Obstacle);
 
@@ -349,18 +351,18 @@ int main(void)
     float maX2 = terrain2.FindMinZ();
     float maX3 = terrain3.FindMinZ();
 
-    // if ((maX1) > character.transform.position.z)
-    // {
-    //   terrain1.InfinitePlane(3 * offset);
-    // }
-    // if ((maX2) > character.transform.position.z)
-    // {
-    //   terrain2.InfinitePlane(3 * offset);
-    // }
-    // if ((maX3) > character.transform.position.z)
-    // {
-    //   terrain3.InfinitePlane(3 * offset);
-    // }
+    if ((maX1) > bbox.transform.position.z)
+    {
+      terrain1.InfinitePlane(3 * offset);
+    }
+    if ((maX2) > bbox.transform.position.z)
+    {
+      terrain2.InfinitePlane(3 * offset);
+    }
+    if ((maX3) > bbox.transform.position.z)
+    {
+      terrain3.InfinitePlane(3 * offset);
+    }
 
     if (collision)
     {
@@ -373,9 +375,9 @@ int main(void)
         // speedVector = speedVector - 2 * dot(normale_au_terrain, speedVector) * normale_au_terrain;
         position_bbox = vec3(position_bbox.x, 0., position_bbox.z);
       }
-      bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+      bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
       bbox.transform.updateTranslate(vec3(0, speedVector.y * deltaTime * 0.08, 0));
-      bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
+      bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
 
     }
 
@@ -408,10 +410,10 @@ int main(void)
     ourShader.setMat4("model", model);
     ourModel.Draw(ourShader);*/
 
-    /*For model animation
+    // For model animation
 		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
+		/* glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 view = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
 
@@ -425,7 +427,7 @@ int main(void)
 		model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f)); // translate it down so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
 		ourShader.setMat4("model", model);
-		ourModel.Draw(ourShader);*/
+		ourModel.Draw(ourShader); */
 
 
     glfwSwapBuffers(window);
@@ -497,31 +499,31 @@ void processInput(GLFWwindow *window)
 
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
   {
-    bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+    bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
     bbox.transform.updateTranslate(vec3(0., 0., -0.008));
-    bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));    
+    bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));    
     position_bbox = bbox.transform.position;
   }
   if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
   {
-    bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+    bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
     bbox.transform.updateTranslate(vec3(0., 0., 0.008));
-    bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
+    bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
     position_bbox = bbox.transform.position;
   }
 
   if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
   {
-    bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+    bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
     bbox.transform.updateTranslate(vec3(-0.008, 0., 0.));
-    bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
+    bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
     position_bbox = bbox.transform.position;
   }
   if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
   {
-    bbox.transform.updateScaling(vec3(1/0.003, 1/0.003, 1/0.003));
+    bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
     bbox.transform.updateTranslate(vec3(+0.008, 0., 0.));
-    bbox.transform.updateScaling(vec3(0.003, 0.003, 0.003));
+    bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
 
     position_bbox = bbox.transform.position;
   }

@@ -394,7 +394,28 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: ../TP1/TP1.cpp \
   ../common/assimp_glm_helpers.h \
   ../external/glm-0.9.7.1/glm/gtc/quaternion.hpp \
   ../external/glm-0.9.7.1/glm/gtc/quaternion.inl \
-  ../common/animdata.h
+  ../common/animdata.h \
+  ../common/animation.h \
+  ../common/bone.h \
+  /usr/include/c++/12/list \
+  /usr/include/c++/12/bits/stl_list.h \
+  /usr/include/c++/12/bits/allocated_ptr.h \
+  /usr/include/c++/12/bits/list.tcc \
+  ../external/glm-0.9.7.1/glm/gtx/quaternion.hpp \
+  ../external/glm-0.9.7.1/glm/gtx/norm.hpp \
+  ../external/glm-0.9.7.1/glm/gtx/norm.inl \
+  ../external/glm-0.9.7.1/glm/gtx/quaternion.inl \
+  /usr/include/c++/12/functional \
+  /usr/include/c++/12/bits/std_function.h \
+  /usr/include/c++/12/unordered_map \
+  /usr/include/c++/12/bits/hashtable.h \
+  /usr/include/c++/12/bits/hashtable_policy.h \
+  /usr/include/c++/12/bits/enable_special_members.h \
+  /usr/include/c++/12/bits/unordered_map.h \
+  /usr/include/c++/12/array \
+  /usr/include/c++/12/compare \
+  ../common/Model.h \
+  ../common/animator.h
 
 CMakeFiles/TP1.dir/common/BBOX.cpp.o: ../common/BBOX.cpp \
   /usr/include/stdc-predef.h \
@@ -4237,6 +4258,26 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 ../external/glm-0.9.7.1/glm/gtc/type_ptr.inl:
 
+/usr/include/c++/12/compare:
+
+/usr/include/c++/12/array:
+
+/usr/include/c++/12/bits/unordered_map.h:
+
+/usr/include/c++/12/bits/enable_special_members.h:
+
+/usr/include/c++/12/bits/hashtable_policy.h:
+
+/usr/include/c++/12/bits/hashtable.h:
+
+/usr/include/c++/12/unordered_map:
+
+/usr/include/c++/12/bits/list.tcc:
+
+/usr/include/c++/12/bits/stl_list.h:
+
+/usr/include/c++/12/list:
+
 ../external/glm-0.9.7.1/glm/gtc/quaternion.inl:
 
 ../external/glm-0.9.7.1/glm/gtc/quaternion.hpp:
@@ -4255,9 +4296,13 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/assimp/postprocess.h:
 
+../external/glm-0.9.7.1/glm/gtx/quaternion.inl:
+
 /usr/include/assimp/metadata.h:
 
 /usr/include/assimp/anim.h:
+
+/usr/include/c++/12/bits/std_function.h:
 
 /usr/include/assimp/material.inl:
 
@@ -4381,9 +4426,13 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 ../external/glm-0.9.7.1/glm/mat4x3.hpp:
 
+../common/animation.h:
+
 ../external/glm-0.9.7.1/glm/detail/type_mat4x2.inl:
 
 ../external/glm-0.9.7.1/glm/detail/type_mat4x2.hpp:
+
+../external/glm-0.9.7.1/glm/gtx/norm.hpp:
 
 ../external/glm-0.9.7.1/glm/mat4x2.hpp:
 
@@ -4502,6 +4551,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 ../external/glm-0.9.7.1/glm/detail/type_float.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
+
+/usr/include/c++/12/functional:
 
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
@@ -4627,6 +4678,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/c++/12/bits/move.h:
 
+../external/glm-0.9.7.1/glm/gtx/norm.inl:
+
 /usr/include/c++/12/cstring:
 
 /usr/include/ctype.h:
@@ -4662,6 +4715,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 ../external/glm-0.9.7.1/glm/detail/type_mat2x4.hpp:
 
 /usr/include/c++/12/bits/exception.h:
+
+../external/glm-0.9.7.1/glm/gtx/quaternion.hpp:
 
 /usr/include/c++/12/bits/locale_classes.tcc:
 
@@ -4773,6 +4828,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 ../external/glm-0.9.7.1/glm/detail/setup.hpp:
 
+/usr/include/c++/12/bits/allocated_ptr.h:
+
 /usr/include/c++/12/bits/nested_exception.h:
 
 ../common/texture.hpp:
@@ -4786,6 +4843,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 /usr/include/c++/12/cfloat:
 
 /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h:
+
+../common/bone.h:
 
 /usr/include/c++/12/tr1/exp_integral.tcc:
 
@@ -4850,6 +4909,8 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+../common/animator.h:
 
 /usr/include/c++/12/ext/type_traits.h:
 

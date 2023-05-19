@@ -327,4 +327,21 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/./common/assimp_glm_helpers.h \
  /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glm-0.9.7.1/glm/gtc/quaternion.hpp \
  /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glm-0.9.7.1/glm/gtc/quaternion.inl \
- /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/./common/animdata.h
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/./common/animdata.h \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/./common/animation.h \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/./common/bone.h \
+ /usr/include/c++/12/list /usr/include/c++/12/bits/stl_list.h \
+ /usr/include/c++/12/bits/allocated_ptr.h \
+ /usr/include/c++/12/bits/list.tcc \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glm-0.9.7.1/glm/gtx/quaternion.hpp \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glm-0.9.7.1/glm/gtx/../gtx/norm.hpp \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glm-0.9.7.1/glm/gtx/../gtx/norm.inl \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glm-0.9.7.1/glm/gtx/quaternion.inl \
+ /usr/include/c++/12/functional /usr/include/c++/12/bits/std_function.h \
+ /usr/include/c++/12/unordered_map /usr/include/c++/12/bits/hashtable.h \
+ /usr/include/c++/12/bits/hashtable_policy.h \
+ /usr/include/c++/12/bits/enable_special_members.h \
+ /usr/include/c++/12/bits/unordered_map.h /usr/include/c++/12/array \
+ /usr/include/c++/12/compare \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/./common/Model.h \
+ /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/./common/animator.h
