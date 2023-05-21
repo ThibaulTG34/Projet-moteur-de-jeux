@@ -27,7 +27,7 @@ Sphere::Sphere(const string textpath, int slices, int stacks, float radius){
 	this->texture = loadTexture2DFromFilePath(textpath);
 	this->sphere(radius, slices, stacks, this->sommets, this->indices);
 	this->uvs = this->compute_uv(this->sommets);
-
+    this->mode = 2;
 }
 
 void Sphere::sphere(float radius, int nb_slices, int nb_stacks, vector<vec3> &vertices, vector<unsigned short> &indices)

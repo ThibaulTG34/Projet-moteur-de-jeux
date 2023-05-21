@@ -88,6 +88,7 @@ BBOX bbox;
 
 // Terrain
 Terrain terrain1, terrain2, terrain3, terrain4, terrain5, terrain6;
+Entity plan_inf;
 
 // Player
 cube right_leg, left_leg;
@@ -97,6 +98,9 @@ cube bust;
 bool isCrounched = false;
 bool isJumping = false;
 bool starting = false;
+bool horsZone = false;
+bool isColliding = false;
+
 // Variables pour les angles de rotation des jambes
 float leftLeg_angle = 0.0f;
 float rightLeg_angle = 0.0f;
@@ -212,7 +216,7 @@ int main(void)
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
 
-  Shader ourShader("model_loading_vs.glsl", "model_loading_fs.glsl");
+  // Shader ourShader("model_loading_vs.glsl", "model_loading_fs.glsl");
 
   // Only load a Model
   // Model ourModel("backpack/backpack.obj");
@@ -299,14 +303,15 @@ int main(void)
 
   terrain1 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programID);
   float offset = terrain1.FindMaxZ();
-  terrain2 = Terrain(terrain1.sommets, terrain1.indices, offset + 2, textureTerrain, heightmap, 1, programID);
-  terrain3 = Terrain(terrain2.sommets, terrain2.indices, offset + 2, textureTerrain, heightmap, 1, programID);
-  terrain4 = Terrain(terrain3.sommets, terrain3.indices, offset + 2, textureTerrain, heightmap, 1, programID);
-  terrain5 = Terrain(terrain4.sommets, terrain4.indices, offset + 2, textureTerrain, heightmap, 1, programID);
-  terrain6 = Terrain(terrain5.sommets, terrain5.indices, offset + 2, textureTerrain, heightmap, 1, programID);
-  
+  terrain2 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programID);
+  terrain3 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programID);
+  terrain4 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programID);
+  terrain5 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programID);
+  terrain6 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programID);
+
   Obstacle = cube(1, 0.2, 0.2, 0.2, 4);
-  SK.addChildren(terrain1);
+  plan_inf = Entity();
+  SK.addChildren(plan_inf);
 
   right_leg = cube(1, 0.05, 0.2, 0.05, 3);
   left_leg = cube(1, 0.05, 0.2, 0.05, 3);
@@ -316,6 +321,8 @@ int main(void)
 
   head = Sphere("mars.jpg", 50, 50, 0.09);
 
+  Entity Head = Entity("character/tete.obj", "sun.jpg", 1);
+
   left_leg_transform = Entity();
   right_leg_transform = Entity();
 
@@ -324,19 +331,46 @@ int main(void)
   // character = Entity("homme.obj", "lava.jpeg", 1);
   // bbox.addChildren(character);
 
-  bbox.transform.updateTranslate(position_bbox);
+  // bbox.transform.updateTranslate(position_bbox);
   // bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
-  // SK.addChildren(bbox);
+  SK.addChildren(bbox);
   // SK.addChildren(Obstacle);
 
   // Racine.addChildren(Obstacle);
-  terrain1.addChildren(terrain2);
-  terrain2.addChildren(terrain3);
-  terrain3.addChildren(terrain4);
-  terrain4.addChildren(terrain5);
-  terrain5.addChildren(terrain6);
+  // SK.addChildren(terrain2);
+  // SK.addChildren(terrain3);
+  // SK.addChildren(terrain4);
+  // SK.addChildren(terrain5);
+  // SK.addChildren(terrain6);
 
-  terrain4.addChildren(Obstacle);
+  plan_inf.addChildren(terrain1);
+  plan_inf.addChildren(terrain2);
+  plan_inf.addChildren(terrain3);
+  plan_inf.addChildren(terrain4);
+  plan_inf.addChildren(terrain5);
+  plan_inf.addChildren(terrain6);
+
+  SK.addChildren(Head);
+
+  vec3 pos2 = vec3(2, 0, -offset - 2);
+  vec3 pos3 = vec3(2, 0, -2 * offset - 4);
+  vec3 pos4 = vec3(2, 0, -3 * offset - 6);
+  vec3 pos5 = vec3(2, 0, -4 * offset - 8);
+  vec3 pos6 = vec3(2, 0, -5 * offset - 10);
+
+  terrain2.transform.updateTranslate(pos2);
+  terrain3.transform.updateTranslate(pos3);
+  terrain4.transform.updateTranslate(pos4);
+  terrain5.transform.updateTranslate(pos5);
+  terrain6.transform.updateTranslate(pos6);
+
+  // terrain4.transform.updateTranslate(position_terrain_1);
+  // terrain5.transform.updateTranslate(position_terrain_1);
+  // terrain6.transform.updateTranslate(position_terrain_1);
+
+  cout << terrain6.transform.position.z << endl;
+
+  terrain2.addChildren(Obstacle);
 
   // Racine.addChildren(right_leg);
   // Racine.addChildren(left_leg);
@@ -345,20 +379,22 @@ int main(void)
   // Racine.addChildren(right_arm);
   // Racine.addChildren(head);
 
+  bbox = BBOX();
+
+  // vec3 bbMin = bbox.computeBbMin(vec3(0.1, 0.1, 0.1), head.sommets);
+  // vec3 bbMax = bbox.computeBbMax(vec3(0.1, 0.1, 0.1), head.sommets);
+  // bbox.computeBBOXVertices(bbMin, bbMax);
+  // bbox.computeBBOXIndices();
+
+  // bbox.addChildren(head);
+
+  bust.addChildren(head);
   bust.addChildren(left_arm);
   bust.addChildren(right_arm);
   bust.addChildren(left_leg_transform);
   bust.addChildren(right_leg_transform);
   left_leg_transform.addChildren(left_leg);
   right_leg_transform.addChildren(right_leg);
-  bust.addChildren(head);
-
-  bbox = BBOX();
-
-  vec3 bbMin = bbox.computeBbMin(vec3(0.1, -0.2, 0.), right_leg.sommets);
-  vec3 bbMax = bbox.computeBbMax(vec3(0.05, 0.28, 0.05), head.sommets);
-  bbox.computeBBOXVertices(bbMin, bbMax);
-  bbox.computeBBOXIndices();
 
   bust.transform.updateTranslate(vec3(0.4, 0.2, 4.));
 
@@ -375,9 +411,7 @@ int main(void)
 
   left_leg.transform.updateTranslate(vec3(0., 0., 0.));
 
-  bbox.addChildren(bust);
-
-  Obstacle.transform.updateTranslate(vec3(-1.5, 0., -5.));
+  Obstacle.transform.updateTranslate(vec3(-1.5, 0., 0.));
 
   vec3 v1 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[1]];
   vec3 v2 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[2]];
@@ -395,6 +429,9 @@ int main(void)
   movePlan = false;
 
   int wait = 0;
+  float fall = 0.0005f;
+  float move = 0.05;
+  int cpt = 0;
 
   do
   {
@@ -418,45 +455,64 @@ int main(void)
 
     if (movePlan)
     {
-      float move = -0.05;
-      terrain1.InfinitePlane(move);
-      terrain2.InfinitePlane(move);
-      terrain3.InfinitePlane(move);
-      terrain4.InfinitePlane(move);
-      terrain5.InfinitePlane(move);
-      terrain6.InfinitePlane(move);
+
+      terrain1.transform.updateTranslate(vec3(0, 0, move));
+      if (cpt == 0)
+        terrain2.transform.updateTranslate(vec3(0, 0, move));
+      terrain3.transform.updateTranslate(vec3(0, 0, move));
+      terrain4.transform.updateTranslate(vec3(0, 0, move));
+      terrain5.transform.updateTranslate(vec3(0, 0, move));
+      terrain6.transform.updateTranslate(vec3(0, 0, move));
+      // terrain2.InfinitePlane(move);
+      // terrain3.InfinitePlane(move);
+      // terrain4.InfinitePlane(move);
+      // terrain5.InfinitePlane(move);
+      // terrain6.InfinitePlane(move);
+      // cout << terrain1.transform.position.z << endl;
     }
 
-    float maX1 = terrain1.FindMinZ();
-    float maX2 = terrain2.FindMinZ();
-    float maX3 = terrain3.FindMinZ();
-    float maX4 = terrain4.FindMinZ();
-    float maX5 = terrain5.FindMinZ();
-    float maX6 = terrain6.FindMinZ();
-    
-    if ((maX1) > bust.transform.position.z)
+    float max1 = terrain1.FindMaxX();
+    float min1 = terrain1.FindMinX();
+    // float maX3 = terrain3.FindMinZ();
+    // float maX4 = terrain4.FindMinZ();
+    // float maX5 = terrain5.FindMinZ();
+    // float maX6 = terrain6.FindMinZ();
+
+    if (terrain1.transform.position.z - 2.5 > bust.transform.position.z)
     {
-      terrain1.InfinitePlane(4.8 * offset);
+      // terrain1.InfinitePlane(maX6);
+      // terrain1.transform.identity();
+      terrain1.transform.updateTranslate(vec3(0, 0, pos6.z));
     }
-    if ((maX2) > bust.transform.position.z)
+    if (terrain2.transform.position.z - 2.5 > bust.transform.position.z)
     {
-      terrain2.InfinitePlane(4.8 * offset);
+      // terrain2.InfinitePlane(4.8 * offset);
+      // terrain2.transform.identity();
+      terrain2.transform.updateTranslate(vec3(0, 0, pos6.z));
     }
-    if ((maX3) > bust.transform.position.z)
+    if (terrain3.transform.position.z - 2.5 > bust.transform.position.z)
     {
-      terrain3.InfinitePlane(4.8 * offset);
+      // terrain3.InfinitePlane(4.8 * offset);
+      // terrain3.transform.identity();
+      terrain3.transform.updateTranslate(vec3(0, 0, pos6.z));
     }
-    if ((maX4) > bust.transform.position.z)
+    if (terrain4.transform.position.z - 2.5 > bust.transform.position.z)
     {
-      terrain4.InfinitePlane(4.8 * offset);
+      // terrain4.InfinitePlane(4.8 * offset);
+      // terrain4.transform.identity();
+      terrain4.transform.updateTranslate(vec3(0, 0, pos6.z));
     }
-    if ((maX5) > bust.transform.position.z)
+    if (terrain5.transform.position.z - 2.5 > bust.transform.position.z)
     {
-      terrain5.InfinitePlane(4.8 * offset);
+      // terrain5.InfinitePlane(4.8 * offset);
+      // terrain5.transform.identity();
+      terrain5.transform.updateTranslate(vec3(0, 0, pos6.z));
     }
-    if ((maX6) > bust.transform.position.z)
+    if (terrain6.transform.position.z - 2.5 > bust.transform.position.z)
     {
-      terrain6.InfinitePlane(4.8 * offset);
+      // terrain6.InfinitePlane(4.8 * offset);
+      // terrain6.transform.identity();
+      terrain6.transform.updateTranslate(vec3(0, 0, pos6.z));
     }
 
     if (collision)
@@ -473,8 +529,40 @@ int main(void)
       }
       bust.transform.updateTranslate(vec3(0, speedVector.y * deltaTime, 0));
     }
+    // cout << plan_inf.transform.position.x << endl;
 
-    // Mettre à jour les angles de rotation des jambes
+    // if (bust.transform.position.x < plan_inf.transform.position.x /*  || bust.transform.position.x < terrain1.transform.position.x */)
+    // {
+    //   horsZone = true;
+    //   bust.transform.updateRotationZ(fall);
+    //   bust.transform.updateTranslate(vec3(-speedVector.x * deltaTime, -speedVector.y * deltaTime * fall*100, 0));
+    // }
+    // else
+    // {
+    //   horsZone = false;
+    // }
+
+    // cout << Obstacle.transform.position.z << endl;
+    // vec3 new_posLeg = vec3(right_leg.transform.position.x, right_leg.transform.position.y, right_leg.transform.position.z + move);
+    // if (right_leg.Collision(terrain2.transform.position, vec3(1, 1, 1), right_leg.transform.position, vec3(0.05, 0.28, 0.05)))
+    // {
+    //   cout << "COLLISION" << endl;
+    // }
+
+    cout << right_leg.FindMaxPoint().x << endl;
+    if (terrain2.transform.position.z > right_leg.FindMinPoint().z + bust.transform.position.z - 0.2 && !isColliding)
+    {
+      isColliding = true;
+      movePlan = false;
+      bust.transform.updateTranslate(vec3(0, 0, 1));
+      movePlan = true;
+    }
+    // else
+    // {
+    // isColliding = false;
+    // movePlan = true;
+    // }
+
     if (wait % 10 == 0 && !isJumping && starting)
     {
       right_leg_transform.transform.identity();
@@ -487,7 +575,7 @@ int main(void)
 
       leftLeg_angle += 5.0f * leftLeg_direction;
       rightLeg_angle += 5.0f * rightLeg_direction;
-      // Inverser le sens de rotation si les angles atteignent les limites
+
       if (leftLeg_angle >= 5.0f || leftLeg_angle <= -1.0f)
       {
         leftLeg_direction *= -1;
@@ -496,15 +584,6 @@ int main(void)
       {
         rightLeg_direction *= -1;
       }
-    }
-
-    if (right_leg.Collision(right_leg.transform.position, vec3(0.05, 0.2, 0.05), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
-    {
-      // right_leg.transform.updateRotationZ(90.f);
-      cout<<"COLLISION"<<endl;
-      // transform.updateTranslate(vec3(0, 0.2, 0));
-      //  Cube.transform.updateTranslate(vec3(0, 0, 1));
-      //  std::cout << Cube.Collision(Cube.transform.position, 1, Obstacle.transform.position, 1) << std::endl;
     }
 
     glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
@@ -628,12 +707,14 @@ void processInput(GLFWwindow *window)
 
   if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
   {
-    terrain1.transform.updateTranslate(vec3(-0.01, 0, 0));
+    if (!horsZone)
+      plan_inf.transform.updateTranslate(vec3(-0.01, 0, 0));
   }
 
   if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
   {
-    terrain1.transform.updateTranslate(vec3(0.01, 0, 0));
+    if (!horsZone)
+      plan_inf.transform.updateTranslate(vec3(0.01, 0, 0));
   }
 }
 

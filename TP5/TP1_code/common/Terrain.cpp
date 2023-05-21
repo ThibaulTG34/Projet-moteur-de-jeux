@@ -67,6 +67,20 @@ float Terrain::FindMinZ()
     return min;
 }
 
+float Terrain::FindMinX()
+{
+    float min = this->sommets[0].x;
+    for (int i = 0; i < this->sommets.size(); i++)
+    {
+        if (min > this->sommets[i].x)
+        {
+            min = this->sommets[i].x;
+        }
+    }
+
+    return min;
+}
+
 float Terrain::FindMaxZ()
 {
     float max = this->sommets[0].z;
@@ -75,6 +89,20 @@ float Terrain::FindMaxZ()
         if (max < this->sommets[i].z)
         {
             max = this->sommets[i].z;
+        }
+    }
+
+    return max;
+}
+
+float Terrain::FindMaxX()
+{
+    float max = this->sommets[0].x;
+    for (int i = 0; i < this->sommets.size(); i++)
+    {
+        if (max < this->sommets[i].x)
+        {
+            max = this->sommets[i].x;
         }
     }
 

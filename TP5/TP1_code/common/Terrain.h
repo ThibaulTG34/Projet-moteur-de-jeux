@@ -21,7 +21,8 @@ public:
 	
 	float FindMinZ();
 	float FindMaxZ();
-
+	float FindMaxX();
+	float FindMinX();
 	
 	std::vector<glm::vec3> Vertices(int resolution, int taille, float offset);
 
