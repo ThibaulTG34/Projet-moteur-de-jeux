@@ -13,6 +13,8 @@ class Terrain:public EntityRoot
 {
 public:
 	
+	Terrain();
+
 	Terrain(int resolution, int taille, float offset, const string path, const string heightmap_path, int mode, uint programID);
 
 	Terrain(vector<vec3> sommets, vector<unsigned short> indices, float offset, const string path, const string heightmap_path, int mode, uint programID);

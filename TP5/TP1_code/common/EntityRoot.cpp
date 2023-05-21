@@ -50,6 +50,19 @@ void EntityRoot::addChildren(EntityRoot &child)
 	child.parent = this;
 }
 
+void EntityRoot::removeChildren(EntityRoot &child)
+{
+	// for(auto c : this->children)
+	// {
+	// 	if (c->parent == child.parent)
+	// 	{
+	// 		c
+	// 	}
+	// }
+	// this->children.push_back(&child);
+	// child.parent = this;
+}
+
 /*RENDERING*/
 void EntityRoot::InitBuffers()
 {

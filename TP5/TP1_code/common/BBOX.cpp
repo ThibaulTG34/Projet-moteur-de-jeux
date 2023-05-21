@@ -19,14 +19,14 @@
 
 using namespace glm;
 
-BBOX::BBOX(){}
+BBOX::BBOX() {}
 
-BBOX::BBOX(vector<vec3> vertices, vec3 epsilon){
+BBOX::BBOX(vector<vec3> vertices, vec3 epsilon)
+{
     vec3 bbMax = this->computeBbMax(epsilon, vertices);
     vec3 bbMin = this->computeBbMin(epsilon, vertices);
-    this->sommets = this->computeBBOXVertices(bbMin, bbMax);
-    this->indices = this->computeBBOXIndices();
-
+    // this->sommets = this->computeBBOXVertices(bbMin, bbMax);
+    // this->indices = this->computeBBOXIndices();
 }
 
 // Calcule BBmin
@@ -50,7 +50,7 @@ vec3 BBOX::computeBbMin(vec3 epsilon, vector<vec3> vertices)
         }
     }
 
-        return vec3(min_x, min_y, min_z) + epsilon;
+    return vec3(min_x, min_y, min_z) + epsilon;
 }
 
 // Calcule BBmax
@@ -77,83 +77,86 @@ vec3 BBOX::computeBbMax(vec3 epsilon, vector<vec3> vertices)
     return vec3(max_x, max_y, max_z) + epsilon;
 }
 
-vector<vec3> BBOX::computeBBOXVertices(vec3 bbMin, vec3 bbMax)
+void BBOX::computeBBOXVertices(vec3 bbMin, vec3 bbMax)
 {
-    vector<vec3> bbox;
+    // vector<vec3> bbox;
 
-    //Sommet devant haut gauche
+    // Sommet devant haut gauche
     vec3 devant_haut_gauche = vec3(bbMin.x, bbMax.y, bbMax.z);
-    bbox.push_back(devant_haut_gauche);
+    this->sommets.push_back(devant_haut_gauche);
 
-    //Sommet devant haut droite
+    // Sommet devant haut droite
     vec3 devant_haut_droite = bbMax;
-    bbox.push_back(devant_haut_droite);
+    this->sommets.push_back(devant_haut_droite);
 
-    //Sommet devant bas gauche
+    // Sommet devant bas gauche
     vec3 devant_bas_gauche = vec3(bbMin.x, bbMin.y, bbMax.z);
-    bbox.push_back(devant_bas_gauche);
+    this->sommets.push_back(devant_bas_gauche);
 
-    //Sommet devant bas droite
+    // Sommet devant bas droite
     vec3 devant_bas_droite = vec3(bbMax.x, bbMin.y, bbMax.z);
-    bbox.push_back(devant_bas_droite);
+    this->sommets.push_back(devant_bas_droite);
 
-    //Sommet derriere bas droite
+    // Sommet derriere bas droite
     vec3 derriere_bas_droite = vec3(bbMax.x, bbMin.y, bbMin.z);
-    bbox.push_back(derriere_bas_droite);
+    this->sommets.push_back(derriere_bas_droite);
 
-    //Sommet derriere haut droite
+    // Sommet derriere haut droite
     vec3 derriere_haut_droite = vec3(bbMax.x, bbMax.y, bbMin.z);
-    bbox.push_back(derriere_haut_droite);
+    this->sommets.push_back(derriere_haut_droite);
 
-    //Sommet derriere bas gauche
+    // Sommet derriere bas gauche
     vec3 derriere_bas_gauche = bbMin;
-    bbox.push_back(derriere_bas_gauche);
+    this->sommets.push_back(derriere_bas_gauche);
 
-    //Sommet derriere haut gauche
+    // Sommet derriere haut gauche
     vec3 derriere_haut_gauche = vec3(bbMin.x, bbMax.y, bbMin.z);
-    bbox.push_back(derriere_haut_gauche);
+    this->sommets.push_back(derriere_haut_gauche);
 
-    return bbox;
+    // return bbox;
 }
 
-vector<unsigned short> BBOX::computeBBOXIndices(){
+void BBOX::computeBBOXIndices()
+{
     vector<unsigned short> indices;
-    indices = 
-    {
-        0, 1, 2,
-        2, 1, 3,
-        3, 2, 6,
-        3, 6, 4,
-        1, 5, 3,
-        3, 5, 4,
-        5, 7, 4,
-        4, 7, 6,
-        7, 0, 6,
-        6, 0, 2,
-        1, 0, 7,
-        1, 7, 5
+    this->indices =
+        {
+            0, 1, 2,
+            2, 1, 3,
+            3, 2, 6,
+            3, 6, 4,
+            1, 5, 3,
+            3, 5, 4,
+            5, 7, 4,
+            4, 7, 6,
+            7, 0, 6,
+            6, 0, 2,
+            1, 0, 7,
+            1, 7, 5
 
-    };
+        };
 
-    return indices;
-
+    // return indices;
 }
 
 bool BBOX::Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2)
 {
-    vec3 halfSize1 = vec3(size1.x/2, size1.y/2, size1.z/2);
-    vec3 halfSize2 = vec3(size2.x/2, size2.y/2, size2.z/2);
+    vec3 halfSize1 = vec3(size1.x / 2, size1.y / 2, size1.z / 2);
+    vec3 halfSize2 = vec3(size2.x / 2, size2.y / 2, size2.z / 2);
     // Calculate the distances between each pair of opposite faces
     float dx = abs(pos1.x - pos2.x);
     float dy = abs(pos1.y - pos2.y);
     float dz = abs(pos1.z - pos2.z);
 
     // Vérifier si les cubes se chevauchent sur l'axe x
-    if (dx <= halfSize1.x + halfSize2.x) {
+    if (dx <= halfSize1.x + halfSize2.x)
+    {
         // Vérifier si les cubes se chevauchent sur l'axe y
-        if (dy <= halfSize1.y + halfSize2.y) {
+        if (dy <= halfSize1.y + halfSize2.y)
+        {
             // Vérifier si les cubes se chevauchent sur l'axe z
-            if (dz <= halfSize1.z + halfSize2.z) {
+            if (dz <= halfSize1.z + halfSize2.z)
+            {
                 // Collision détectée
                 return true;
             }

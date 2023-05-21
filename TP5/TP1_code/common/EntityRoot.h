@@ -29,6 +29,8 @@ public :
 
 	void addChildren(EntityRoot &child);
 
+	void removeChildren(EntityRoot &child);
+
 	void updateSelfAndChild();
 
 	void setUpTexture();

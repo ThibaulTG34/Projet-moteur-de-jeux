@@ -22,9 +22,9 @@ public:
 
     vec3 computeBbMax(vec3 epsilon, vector<vec3> vertices);
 
-    vector<vec3> computeBBOXVertices(vec3 bbMin, vec3 bbMax);
+    void computeBBOXVertices(vec3 bbMin, vec3 bbMax);
 
-    vector<unsigned short> computeBBOXIndices();
+    void computeBBOXIndices();
 
     bool Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2);
 };

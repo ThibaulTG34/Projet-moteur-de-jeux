@@ -34,6 +34,8 @@ struct Transform
 
     mat4 getLocalModelMatrix();
 
+    void identity();
+
 };
 
 #endif

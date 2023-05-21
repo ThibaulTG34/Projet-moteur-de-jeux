@@ -29,9 +29,6 @@ using namespace std;
 #include <common/cube.h>
 #include <common/BBOX.h>
 #include <common/Shader.h>
-#include <common/Model.h>
-#include <common/animation.h>
-#include <common/animator.h>
 
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -86,8 +83,30 @@ glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
 
 cube Obstacle;
-Entity character;
+// Entity character;
 BBOX bbox;
+
+// Terrain
+Terrain terrain1, terrain2, terrain3, terrain4, terrain5, terrain6;
+
+// Player
+cube right_leg, left_leg;
+Sphere head;
+cube right_arm, left_arm;
+cube bust;
+bool isCrounched = false;
+bool isJumping = false;
+bool starting = false;
+// Variables pour les angles de rotation des jambes
+float leftLeg_angle = 0.0f;
+float rightLeg_angle = 0.0f;
+
+// Variables pour le sens de rotation des jambes
+int leftLeg_direction = 1;
+int rightLeg_direction = -1;
+
+Entity left_leg_transform;
+Entity right_leg_transform;
 
 std::vector<std::string> faces1 = {"arch/left.png", "arch/right.png",
                                    "arch/up.png", "arch/down.png",
@@ -195,13 +214,13 @@ int main(void)
 
   Shader ourShader("model_loading_vs.glsl", "model_loading_fs.glsl");
 
-  //Only load a Model
-  //Model ourModel("backpack/backpack.obj");
+  // Only load a Model
+  // Model ourModel("backpack/backpack.obj");
 
-  //Model + anim
-  // Model ourModel("vampire/dancing_vampire.dae");
-	// Animation runAnimation("vampire/dancing_vampire.dae", &ourModel);
-	// Animator animator(&runAnimation);
+  // Model + anim
+  //  Model ourModel("vampire/dancing_vampire.dae");
+  //  Animation runAnimation("vampire/dancing_vampire.dae", &ourModel);
+  //  Animator animator(&runAnimation);
 
   float size = 30.f;
 
@@ -278,31 +297,87 @@ int main(void)
   const string file = "lava.jpeg";
   const string normalMAP = "murNormal.png";
 
-  Terrain terrain1(16, 4, 2, textureTerrain, heightmap, 1, programID);
+  terrain1 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programID);
   float offset = terrain1.FindMaxZ();
-  Terrain terrain2(terrain1.sommets, terrain1.indices, offset + 2, textureTerrain, heightmap, 1, programID);
-  Terrain terrain3(terrain2.sommets, terrain2.indices, offset + 2, textureTerrain, heightmap, 1, programID);
+  terrain2 = Terrain(terrain1.sommets, terrain1.indices, offset + 2, textureTerrain, heightmap, 1, programID);
+  terrain3 = Terrain(terrain2.sommets, terrain2.indices, offset + 2, textureTerrain, heightmap, 1, programID);
+  terrain4 = Terrain(terrain3.sommets, terrain3.indices, offset + 2, textureTerrain, heightmap, 1, programID);
+  terrain5 = Terrain(terrain4.sommets, terrain4.indices, offset + 2, textureTerrain, heightmap, 1, programID);
+  terrain6 = Terrain(terrain5.sommets, terrain5.indices, offset + 2, textureTerrain, heightmap, 1, programID);
+  
   Obstacle = cube(1, 0.2, 0.2, 0.2, 4);
   SK.addChildren(terrain1);
 
- terrain1.transform.updateTranslate(position_terrain_1);
+  right_leg = cube(1, 0.05, 0.2, 0.05, 3);
+  left_leg = cube(1, 0.05, 0.2, 0.05, 3);
+  bust = cube(1, 0.1, 0.19, 0.1, 3);
+  left_arm = cube(1, 0.05, 0.2, 0.05, 4);
+  right_arm = cube(1, 0.05, 0.2, 0.05, 4);
 
-  character = Entity("homme.obj", "lava.jpeg", 1);
-  bbox = BBOX(character.sommets, vec3(0.1, 0.1, 0.1));
+  head = Sphere("mars.jpg", 50, 50, 0.09);
+
+  left_leg_transform = Entity();
+  right_leg_transform = Entity();
+
+  terrain1.transform.updateTranslate(position_terrain_1);
+
+  // character = Entity("homme.obj", "lava.jpeg", 1);
   // bbox.addChildren(character);
 
   bbox.transform.updateTranslate(position_bbox);
-  bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
-  SK.addChildren(bbox);
-  SK.addChildren(Obstacle);
+  // bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
+  // SK.addChildren(bbox);
+  // SK.addChildren(Obstacle);
 
-  Racine.addChildren(Obstacle);
+  // Racine.addChildren(Obstacle);
   terrain1.addChildren(terrain2);
   terrain2.addChildren(terrain3);
+  terrain3.addChildren(terrain4);
+  terrain4.addChildren(terrain5);
+  terrain5.addChildren(terrain6);
 
-  bbox.addChildren(character);
+  terrain4.addChildren(Obstacle);
 
-  Obstacle.transform.updateTranslate(vec3(0.5, 0., -1.));
+  // Racine.addChildren(right_leg);
+  // Racine.addChildren(left_leg);
+  Racine.addChildren(bust);
+  // Racine.addChildren(left_arm);
+  // Racine.addChildren(right_arm);
+  // Racine.addChildren(head);
+
+  bust.addChildren(left_arm);
+  bust.addChildren(right_arm);
+  bust.addChildren(left_leg_transform);
+  bust.addChildren(right_leg_transform);
+  left_leg_transform.addChildren(left_leg);
+  right_leg_transform.addChildren(right_leg);
+  bust.addChildren(head);
+
+  bbox = BBOX();
+
+  vec3 bbMin = bbox.computeBbMin(vec3(0.1, -0.2, 0.), right_leg.sommets);
+  vec3 bbMax = bbox.computeBbMax(vec3(0.05, 0.28, 0.05), head.sommets);
+  bbox.computeBBOXVertices(bbMin, bbMax);
+  bbox.computeBBOXIndices();
+
+  bust.transform.updateTranslate(vec3(0.4, 0.2, 4.));
+
+  left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+  right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2, 0.));
+
+  left_arm.transform.updateTranslate(vec3(-0.05, 0.2, -0.05));
+  right_arm.transform.updateTranslate(vec3(0.1, 0.2, -0.05));
+
+  head.transform.updateTranslate(vec3(0.05, 0.28, 0.05));
+
+  left_arm.transform.updateRotationX(90.f);
+  right_arm.transform.updateRotationX(90.f);
+
+  left_leg.transform.updateTranslate(vec3(0., 0., 0.));
+
+  bbox.addChildren(bust);
+
+  Obstacle.transform.updateTranslate(vec3(-1.5, 0., -5.));
 
   vec3 v1 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[1]];
   vec3 v2 = terrain1.sommets[terrain1.indices[0]] - terrain1.sommets[terrain1.indices[2]];
@@ -318,6 +393,8 @@ int main(void)
   ViewMatrix = glm::mat4(1.f);
   ProjectionMatrix = glm::mat4(1.f);
   movePlan = false;
+
+  int wait = 0;
 
   do
   {
@@ -345,23 +422,41 @@ int main(void)
       terrain1.InfinitePlane(move);
       terrain2.InfinitePlane(move);
       terrain3.InfinitePlane(move);
+      terrain4.InfinitePlane(move);
+      terrain5.InfinitePlane(move);
+      terrain6.InfinitePlane(move);
     }
 
     float maX1 = terrain1.FindMinZ();
     float maX2 = terrain2.FindMinZ();
     float maX3 = terrain3.FindMinZ();
-
-    if ((maX1) > bbox.transform.position.z)
+    float maX4 = terrain4.FindMinZ();
+    float maX5 = terrain5.FindMinZ();
+    float maX6 = terrain6.FindMinZ();
+    
+    if ((maX1) > bust.transform.position.z)
     {
-      terrain1.InfinitePlane(3 * offset);
+      terrain1.InfinitePlane(4.8 * offset);
     }
-    if ((maX2) > bbox.transform.position.z)
+    if ((maX2) > bust.transform.position.z)
     {
-      terrain2.InfinitePlane(3 * offset);
+      terrain2.InfinitePlane(4.8 * offset);
     }
-    if ((maX3) > bbox.transform.position.z)
+    if ((maX3) > bust.transform.position.z)
     {
-      terrain3.InfinitePlane(3 * offset);
+      terrain3.InfinitePlane(4.8 * offset);
+    }
+    if ((maX4) > bust.transform.position.z)
+    {
+      terrain4.InfinitePlane(4.8 * offset);
+    }
+    if ((maX5) > bust.transform.position.z)
+    {
+      terrain5.InfinitePlane(4.8 * offset);
+    }
+    if ((maX6) > bust.transform.position.z)
+    {
+      terrain6.InfinitePlane(4.8 * offset);
     }
 
     if (collision)
@@ -369,32 +464,55 @@ int main(void)
       vec3 velocity = speedVector + acceleration * deltaTime;
       position_bbox = position_bbox + speedVector * deltaTime + acceleration * deltaTime * deltaTime;
       speedVector = velocity;
-      if (position_bbox.y < terrain1.sommets[0][1] || position_bbox.y < terrain2.sommets[0][1] || position_bbox.y < terrain3.sommets[0][1])
+      if (position_bbox.y - 0.2 < terrain1.sommets[0][1] || position_bbox.y < terrain2.sommets[0][1] || position_bbox.y < terrain3.sommets[0][1])
       {
+        isJumping = false;
         speedVector = vec3(0., 0., 0.);
         // speedVector = speedVector - 2 * dot(normale_au_terrain, speedVector) * normale_au_terrain;
         position_bbox = vec3(position_bbox.x, 0., position_bbox.z);
       }
-      bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
-      bbox.transform.updateTranslate(vec3(0, speedVector.y * deltaTime * 0.08, 0));
-      bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
-
+      bust.transform.updateTranslate(vec3(0, speedVector.y * deltaTime, 0));
     }
 
-    //cout<<bbox.transform.position.x<<" "<<bbox.transform.position.y<<" "<<bbox.transform.position.z<<endl;
-    if (bbox.Collision(bbox.transform.position, vec3(0.05, 0.05, 0.05), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    // Mettre à jour les angles de rotation des jambes
+    if (wait % 10 == 0 && !isJumping && starting)
     {
-      bbox.transform.updateRotationZ(90.f);
-      //cout<<"COLLISION"<<endl;
-      //transform.updateTranslate(vec3(0, 0.2, 0));
-      // Cube.transform.updateTranslate(vec3(0, 0, 1));
-      // std::cout << Cube.Collision(Cube.transform.position, 1, Obstacle.transform.position, 1) << std::endl;
+      right_leg_transform.transform.identity();
+      right_leg_transform.transform.updateRotationX(rightLeg_angle);
+      right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
+
+      left_leg_transform.transform.identity();
+      left_leg_transform.transform.updateRotationX(leftLeg_angle);
+      left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+
+      leftLeg_angle += 5.0f * leftLeg_direction;
+      rightLeg_angle += 5.0f * rightLeg_direction;
+      // Inverser le sens de rotation si les angles atteignent les limites
+      if (leftLeg_angle >= 5.0f || leftLeg_angle <= -1.0f)
+      {
+        leftLeg_direction *= -1;
+      }
+      if (rightLeg_angle >= 5.0f || rightLeg_angle <= -1.0f)
+      {
+        rightLeg_direction *= -1;
+      }
+    }
+
+    if (right_leg.Collision(right_leg.transform.position, vec3(0.05, 0.2, 0.05), Obstacle.transform.position, vec3(0.2, 0.2, 0.2)))
+    {
+      // right_leg.transform.updateRotationZ(90.f);
+      cout<<"COLLISION"<<endl;
+      // transform.updateTranslate(vec3(0, 0.2, 0));
+      //  Cube.transform.updateTranslate(vec3(0, 0, 1));
+      //  std::cout << Cube.Collision(Cube.transform.position, 1, Obstacle.transform.position, 1) << std::endl;
     }
 
     glUniformMatrix4fv(glGetUniformLocation(programID, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
     glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0]);
 
-    //ourShader.use();
+    wait++;
+
+    // ourShader.use();
 
     /*For model loading
     // view/projection transformations
@@ -410,29 +528,8 @@ int main(void)
     ourShader.setMat4("model", model);
     ourModel.Draw(ourShader);*/
 
-    // For model animation
-		// view/projection transformations
-		/* glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
-
-        auto transforms = animator.GetFinalBoneMatrices();
-		for (int i = 0; i < transforms.size(); ++i)
-			ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-
-
-		// render the loaded model
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
-		ourShader.setMat4("model", model);
-		ourModel.Draw(ourShader); */
-
-
     glfwSwapBuffers(window);
     glfwPollEvents();
-
   } while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(window) == 0);
 
@@ -487,45 +584,56 @@ void processInput(GLFWwindow *window)
 
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
   {
+    isJumping = true;
     collision = true;
-    speedVector = vec3(0., 10 * sin(v0_angle), -10 * cos(v0_angle));
-    position_bbox = bbox.transform.position;
+    speedVector = vec3(0., 5 * sin(v0_angle), -5 * cos(v0_angle));
+    position_bbox = bust.transform.position;
   }
 
   if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
   {
+    starting = true;
     movePlan = true;
   }
 
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
   {
-    bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
-    bbox.transform.updateTranslate(vec3(0., 0., -0.008));
-    bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));    
-    position_bbox = bbox.transform.position;
+    if (isCrounched)
+    {
+      right_leg_transform.transform.identity();
+      left_leg_transform.transform.identity();
+      bust.transform.updateRotationX(-80.f);
+      right_leg_transform.transform.updateRotationX(80.f);
+      right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
+      left_leg_transform.transform.updateRotationX(80.f);
+      left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+      isCrounched = false;
+    }
   }
+
   if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
   {
-    bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
-    bbox.transform.updateTranslate(vec3(0., 0., 0.008));
-    bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
-    position_bbox = bbox.transform.position;
+    if (!isCrounched)
+    {
+      right_leg_transform.transform.identity();
+      left_leg_transform.transform.identity();
+      bust.transform.updateRotationX(80.f);
+      right_leg_transform.transform.updateRotationX(-80.f);
+      right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
+      left_leg_transform.transform.updateRotationX(-80.f);
+      left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+      isCrounched = true;
+    }
   }
 
   if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
   {
-    bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
-    bbox.transform.updateTranslate(vec3(-0.008, 0., 0.));
-    bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
-    position_bbox = bbox.transform.position;
+    terrain1.transform.updateTranslate(vec3(-0.01, 0, 0));
   }
+
   if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
   {
-    bbox.transform.updateScaling(vec3(1/0.0008, 1/0.0008, 1/0.0008));
-    bbox.transform.updateTranslate(vec3(+0.008, 0., 0.));
-    bbox.transform.updateScaling(vec3(0.0008, 0.0008, 0.0008));
-
-    position_bbox = bbox.transform.position;
+    terrain1.transform.updateTranslate(vec3(0.01, 0, 0));
   }
 }
 

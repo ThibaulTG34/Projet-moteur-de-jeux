@@ -19,6 +19,10 @@
 
 using namespace glm;
 
+Terrain::Terrain()
+{
+}
+
 Terrain::Terrain(int resolution, int taille, float offset, const string path, const string heightmap_path, int mode, uint programID)
 {
     this->sommets = this->Vertices(resolution, taille, offset);
@@ -140,7 +144,7 @@ std::vector<vec2> Terrain::compute_uv(vector<vec3> vertices)
     vector<vec2> UVs;
     for (unsigned int i = 0; i < vertices.size(); i++)
     {
-        UVs.push_back(vec2(vertices[i].x, vertices[i].z/7));
+        UVs.push_back(vec2(vertices[i].x, vertices[i].z / 7));
     }
     return UVs;
 }
