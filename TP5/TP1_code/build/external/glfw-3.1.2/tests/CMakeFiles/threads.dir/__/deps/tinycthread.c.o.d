@@ -1,7 +1,7 @@
 external/glfw-3.1.2/tests/CMakeFiles/threads.dir/__/deps/tinycthread.c.o: \
- /home/marie/Desktop/Moteur_de_Jeux/TP5/TP1_code/external/glfw-3.1.2/deps/tinycthread.c \
+ /home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/external/glfw-3.1.2/deps/tinycthread.c \
  /usr/include/stdc-predef.h \
- /home/marie/Desktop/Moteur_de_Jeux/TP5/TP1_code/external/glfw-3.1.2/deps/tinycthread.h \
+ /home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/external/glfw-3.1.2/deps/tinycthread.h \
  /usr/include/time.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -10,7 +10,7 @@ external/glfw-3.1.2/tests/CMakeFiles/threads.dir/__/deps/tinycthread.c.o: \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/12/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/time.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h \

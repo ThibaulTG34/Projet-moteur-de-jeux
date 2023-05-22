@@ -10,10 +10,9 @@
 using namespace std;
 using namespace glm;
 
-class BBOX:public EntityRoot
+class BBOX : public EntityRoot
 {
 public:
-
     BBOX();
 
     BBOX(vector<vec3> vertices, vec3 epsilon);
@@ -27,6 +26,14 @@ public:
     void computeBBOXIndices();
 
     bool Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2);
+
+    void drawEntity(uint programID);
+
+    vec3 getBbmin();
+    vec3 getBbmax();
+
+private:
+    vec3 BBmin, BBmax;
 };
 
 #endif

@@ -41,7 +41,7 @@ public :
 
 	void bindBuffers();
 
-	void drawEntity(uint programID);
+	/* virtual  */void drawEntity(uint programID);
 
 	void clearBuffers();
 

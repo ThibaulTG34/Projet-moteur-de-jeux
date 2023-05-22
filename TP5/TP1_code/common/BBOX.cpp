@@ -25,8 +25,10 @@ BBOX::BBOX(vector<vec3> vertices, vec3 epsilon)
 {
     vec3 bbMax = this->computeBbMax(epsilon, vertices);
     vec3 bbMin = this->computeBbMin(epsilon, vertices);
-    // this->sommets = this->computeBBOXVertices(bbMin, bbMax);
-    // this->indices = this->computeBBOXIndices();
+    this->BBmax = bbMax;
+    this->BBmin = bbMin;
+    /* this->sommets =  */ this->computeBBOXVertices(bbMin, bbMax);
+    /* this->indices =  */ this->computeBBOXIndices();
 }
 
 // Calcule BBmin
@@ -165,4 +167,22 @@ bool BBOX::Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2)
 
     // Pas de collision détectée
     return false;
+}
+
+// void BBOX::drawEntity(uint programID)
+// {
+//     for (unsigned int i = 0; i < this->children.size(); i++)
+//     {
+//         children[i]->drawEntity(programID);
+//     }
+// }
+
+vec3 BBOX::getBbmin()
+{
+    return this->BBmin;
+}
+
+vec3 BBOX::getBbmax()
+{
+    return this->BBmax;
 }

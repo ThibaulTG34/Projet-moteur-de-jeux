@@ -50,7 +50,7 @@ float lastY = 600.0 / 2.0;
 float fov = 45.0f;
 float rotation_speed = 0.01f;
 
-//Mecanique
+// Mecanique
 int poids_character = 2;
 float v0_angle = 45.0f;
 vec3 speedVector = vec3(10 * cos(v0_angle), 10 * sin(v0_angle), 0.);
@@ -66,7 +66,7 @@ float lastFrame = 0.0f;
 float angle = 0.;
 float zoom = 1.;
 
-//Declaration des booleens
+// Declaration des booleens
 bool collision = false;
 bool firstMouse = true;
 bool isCrounched = false;
@@ -76,7 +76,7 @@ bool horsZone = false;
 bool isColliding = false;
 bool movePlan;
 
-//Autres variables utiles
+// Autres variables utiles
 float ismoving = 0.05;
 int cpt = 0;
 int wait = 0;
@@ -86,19 +86,21 @@ GLuint programScene;
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
 
-//Declaration des objets de la scene
+// Declaration des objets de la scene
 EntityRoot Racine;
 skybox Skybox;
 Entity head, right_leg, left_leg, right_arm, left_arm, bust, infinite_plane;
+BBOX rLegBox, lLegBox, obstBox;
+
 Terrain terrain1, terrain2, terrain3, terrain4, terrain5, terrain6;
 Entity left_leg_transform, right_leg_transform;
 cube Obstacle;
 
-//Declaration des textures
+// Declaration des textures
 string textureTerrain("mur.jpg");
 string heightmap("Heightmap_Rocky.png");
 
-//Positions initiales
+// Positions initiales
 vec3 position_character = vec3(10, 0, 0);
 vec3 position_during_jump;
 
@@ -110,14 +112,13 @@ float rightLeg_angle = 0.0f;
 int leftLeg_direction = 1;
 int rightLeg_direction = -1;
 
-//Parametres de construction de la skybox
+// Parametres de construction de la skybox
 std::vector<std::string> faces = {"rainbow/rainbow_lf.png", "rainbow/rainbow_rt.png",
-                                   "rainbow/rainbow_up.png", "rainbow/rainbow_dn.png",
-                                   "rainbow/rainbow_ft.png", "rainbow/rainbow_bk.png"};
+                                  "rainbow/rainbow_up.png", "rainbow/rainbow_dn.png",
+                                  "rainbow/rainbow_ft.png", "rainbow/rainbow_bk.png"};
 
 float skybox_size = 30.f;
 int skybox_mode = 2;
-
 
 int main(void)
 {
@@ -189,16 +190,15 @@ int main(void)
   Skybox = skybox(faces, skybox_size, skybox_mode);
   head = Entity("head.obj", "rock.png", 2, 1);
   bust = Entity("bust.obj", "rock.png", 2, 1);
+  // bust.transform.updateRotationY(194);
   bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
   bust.transform.updateTranslate(position_character);
 
   right_leg = Entity("right_leg.obj", "rock.png", 2, 1);
   right_leg_transform = Entity();
-  right_leg_transform.addChildren(right_leg);
 
   left_leg = Entity("left_leg.obj", "rock.png", 2, 1);
   left_leg_transform = Entity();
-  left_leg_transform.addChildren(left_leg);
 
   right_arm = Entity("right_arm.obj", "rock.png", 2, 1);
   left_arm = Entity("left_arm.obj", "rock.png", 2, 1);
@@ -225,11 +225,16 @@ int main(void)
   infinite_plane.addChildren(terrain6);
 
   Obstacle = cube(1, 0.4, 0.4, 0.4, 4);
-  terrain2.addChildren(Obstacle);
-  Obstacle.transform.updateTranslate(vec3(-1, 0., 0.));
+  obstBox = BBOX(Obstacle.sommets, vec3(0., 0., 0.));
+  // Obstacle.transform.updateTranslate(vec3(0, 0, 0));
+  obstBox.addChildren(Obstacle);
+  obstBox.transform.updateTranslate(vec3(-1, 0., 0.));
+
+  terrain2.addChildren(obstBox);
+  // Obstacle.transform.updateTranslate(vec3(0, 0, 0));
 
   float offset = terrain1.FindMaxZ();
-
+  cout << "offset = " << offset << endl;
   vec3 pos1 = vec3(2., 0., 0.);
   vec3 pos2 = vec3(2, 0, -offset - 2);
   vec3 pos3 = vec3(2, 0, -2 * offset - 4);
@@ -251,15 +256,25 @@ int main(void)
   bust.addChildren(head);
   bust.addChildren(left_arm);
   bust.addChildren(right_arm);
-  bust.addChildren(left_leg_transform);
-  bust.addChildren(right_leg_transform);
 
-  bust.transform.updateRotationY(195);
+  rLegBox = BBOX(right_leg.sommets, vec3(0.1, 0.1, 0.1));
+  lLegBox = BBOX(left_leg.sommets, vec3(0.1, 0.1, 0.1));
 
-  bust.transform.updateTranslate(vec3(0.4, 0.2, 4.));
+  // right_leg_transform.addChildren(right_leg);
+  // left_leg_transform.addChildren(left_leg);
 
-  left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
-  right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2, 0.));
+  rLegBox.addChildren(right_leg);
+  rLegBox.addChildren(left_leg);
+
+  bust.addChildren(rLegBox);
+  bust.addChildren(lLegBox);
+
+  bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
+  bust.transform.updateTranslate(vec3(0.35, 0., 4.));
+  bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
+
+  // left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+  // right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2, 0.));
 
   glUseProgram(programScene);
   GLuint LightID = glGetUniformLocation(programScene, "LightPosition_worldspace");
@@ -290,9 +305,11 @@ int main(void)
     Racine.updateSelfAndChild();
     Racine.drawEntity(programScene);
 
-    if (movePlan){
+    if (movePlan)
+    {
       terrain1.transform.updateTranslate(vec3(0, 0, ismoving));
-      if (cpt == 0){
+      if (cpt == 0)
+      {
         terrain2.transform.updateTranslate(vec3(0, 0, ismoving));
         terrain3.transform.updateTranslate(vec3(0, 0, ismoving));
         terrain4.transform.updateTranslate(vec3(0, 0, ismoving));
@@ -300,7 +317,6 @@ int main(void)
         terrain6.transform.updateTranslate(vec3(0, 0, ismoving));
       }
     }
-
 
     if (terrain1.transform.position.z - 2.5 > bust.transform.position.z)
     {
@@ -327,48 +343,65 @@ int main(void)
       terrain6.transform.updateTranslate(vec3(0, 0, pos6.z));
     }
 
-    if (terrain2.transform.position.z > right_leg.FindMinPoint().z + bust.transform.position.z - 0.2 && !isColliding){
-      isColliding = true;
+    cout << lLegBox.getBbmin().x - infinite_plane.transform.position.x << endl;
+
+    // Collision sur l'axe Y,Z
+    if (terrain2.transform.position.z > rLegBox.getBbmin().z + bust.transform.position.z + 1 - 0.4 && !isColliding && bust.transform.position.y < obstBox.transform.position.y + 0.2 && (/* obstBox.getBbmin().x <= rLegBox.getBbmax().x - infinite_plane.transform.position.x <= obstBox.getBbmax().x ||  */obstBox.getBbmin().x <= lLegBox.getBbmin().x - infinite_plane.transform.position.x <= obstBox.getBbmax().x))
+    {
+      cout << "collision" << endl;
+      // isColliding = true;
       movePlan = false;
-      bust.transform.updateTranslate(vec3(0, 0, 1));
-      movePlan = true;
+      // bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
+      // bust.transform.updateTranslate(vec3(0, 0, 1));
+      // bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
+      // movePlan = true;
     }
+
+    // if ()
+    // {
+    //     cout << "collision" << endl;
+    // }
 
     if (collision)
     {
       vec3 velocity = speedVector + acceleration * deltaTime;
       position_during_jump = position_during_jump + speedVector * deltaTime + acceleration * deltaTime * deltaTime;
       speedVector = velocity;
-      if (position_during_jump.y - 0.2 < terrain1.sommets[0][1] || position_during_jump.y < terrain2.sommets[0][1] || position_during_jump.y < terrain3.sommets[0][1])
+      if (position_during_jump.y < terrain1.sommets[0][1] || position_during_jump.y < terrain2.sommets[0][1] || position_during_jump.y < terrain3.sommets[0][1])
       {
         isJumping = false;
         speedVector = vec3(0., 0., 0.);
         // speedVector = speedVector - 2 * dot(normale_au_terrain, speedVector) * normale_au_terrain;
         position_during_jump = vec3(position_during_jump.x, 0., position_during_jump.z);
       }
+      bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
       bust.transform.updateTranslate(vec3(0, speedVector.y * deltaTime, 0));
+      bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
     }
 
-    if (wait % 10 == 0 && !isJumping && starting){
+    // if (wait % 10 == 0 && !isJumping && starting)
+    // {
 
-      right_leg_transform.transform.identity();
-      right_leg_transform.transform.updateRotationX(rightLeg_angle);
-      right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
+    //   rLegBox.transform.identity();
+    //   rLegBox.transform.updateRotationX(rightLeg_angle);
+    //   rLegBox.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
 
-      left_leg_transform.transform.identity();
-      left_leg_transform.transform.updateRotationX(leftLeg_angle);
-      left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+    //   lLegBox.transform.identity();
+    //   lLegBox.transform.updateRotationX(leftLeg_angle);
+    //   lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
 
-      leftLeg_angle += 5.0f * leftLeg_direction;
-      rightLeg_angle += 5.0f * rightLeg_direction;
+    //   leftLeg_angle += 5.0f * leftLeg_direction;
+    //   rightLeg_angle += 5.0f * rightLeg_direction;
 
-      if (leftLeg_angle >= 5.0f || leftLeg_angle <= -1.0f){
-        leftLeg_direction *= -1;
-      }
-      if (rightLeg_angle >= 5.0f || rightLeg_angle <= -1.0f){
-        rightLeg_direction *= -1;
-      }
-    }
+    //   if (leftLeg_angle >= 5.0f || leftLeg_angle <= -1.0f)
+    //   {
+    //     leftLeg_direction *= -1;
+    //   }
+    //   if (rightLeg_angle >= 5.0f || rightLeg_angle <= -1.0f)
+    //   {
+    //     rightLeg_direction *= -1;
+    //   }
+    // }
 
     wait++;
 
@@ -379,7 +412,6 @@ int main(void)
     glfwPollEvents();
   } while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(window) == 0);
-
 
   glDeleteProgram(programScene);
   glDeleteVertexArrays(1, &VertexArrayID);
@@ -436,32 +468,45 @@ void processInput(GLFWwindow *window)
   {
     if (isCrounched)
     {
-      right_leg_transform.transform.identity();
-      left_leg_transform.transform.identity();
+      bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
+      rLegBox.transform.identity();
+      lLegBox.transform.identity();
       bust.transform.updateRotationX(-80.f);
-      right_leg_transform.transform.updateRotationX(80.f);
-      right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
-      left_leg_transform.transform.updateRotationX(80.f);
-      left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+      rLegBox.transform.updateRotationX(80.f);
+      rLegBox.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
+      lLegBox.transform.updateRotationX(80.f);
+      lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
       isCrounched = false;
+      bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
     }
   }
 
-   if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
   {
     if (!isCrounched)
     {
-      right_leg_transform.transform.identity();
-      left_leg_transform.transform.identity();
+      bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
+      rLegBox.transform.identity();
+      lLegBox.transform.identity();
       bust.transform.updateRotationX(80.f);
-      right_leg_transform.transform.updateRotationX(-80.f);
-      right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
-      left_leg_transform.transform.updateRotationX(-80.f);
-      left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+      rLegBox.transform.updateRotationX(-80.f);
+      rLegBox.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
+      lLegBox.transform.updateRotationX(-80.f);
+      lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
       isCrounched = true;
+      bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
     }
   }
 
+  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+  {
+    infinite_plane.transform.updateTranslate(vec3(-0.02, 0, 0));
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+  {
+    infinite_plane.transform.updateTranslate(vec3(0.02, 0, 0));
+  }
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
