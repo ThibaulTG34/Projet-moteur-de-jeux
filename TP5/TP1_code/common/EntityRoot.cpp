@@ -105,14 +105,27 @@ void EntityRoot::drawEntity(uint programID)
 {
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glUniform1i(glGetUniformLocation(programID, "mode"), this->mode);
-	glUniform1i(glGetUniformLocation(programID, "texturemode"), this->texturemode);
 
 	this->InitBuffers();
 	if (this->texture != -1)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glUniform1i(glGetUniformLocation(programID, "textureID"), 0);
+		if(this->mode == 1){
+			glUniform1i(glGetUniformLocation(programID, "texture_terrain"), 0);
+		}
+		else if(this->mode == 3){
+			glUniform1i(glGetUniformLocation(programID, "texture_roche"), 0);
+		}
+		else if(this->mode == 4){
+			glUniform1i(glGetUniformLocation(programID, "texture_peau"), 0);
+		}
+		else if(this->mode == 5){
+			glUniform1i(glGetUniformLocation(programID, "texture_bois"), 0);
+		}
+		else if(this->mode == 6){
+			glUniform1i(glGetUniformLocation(programID, "texture_arbre"), 0);
+		}
 	}
 
 	if (this->heightmap != -1)

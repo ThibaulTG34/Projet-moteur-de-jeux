@@ -35,12 +35,14 @@ Entity::Entity(const string path, const string textpath, int loading, int mode)
 		loadOFF(path, this->sommets, this->indices, this->triangles);
 		this->texture = loadTexture2DFromFilePath(textpath);
 		this->uvs = this->compute_uv(this->sommets);
+		this->mode = mode;
 	}
 	else if(loading == 1)
 	{
 		this->texture = loadTexture2DFromFilePath(textpath);
 		loadAssImp(path.c_str(), this->indices, this->sommets);
 		this->uvs = this->compute_uv(this->sommets);
+		this->mode = mode;
 	}
 	else
 	{
@@ -48,6 +50,7 @@ Entity::Entity(const string path, const string textpath, int loading, int mode)
 		loadOBJ(path.c_str(), this->sommets, this->uvs, this->normales);
 		indexVBO(this->sommets, this->uvs, this->normales, this->indices, this->sommets, this->uvs, this->normales);
 		this->uvs = this->compute_uv(this->sommets);
+		this->mode = mode;
 	}
 }
 

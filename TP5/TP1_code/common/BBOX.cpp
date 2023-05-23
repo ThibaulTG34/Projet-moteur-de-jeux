@@ -169,13 +169,13 @@ bool BBOX::Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2)
     return false;
 }
 
-// void BBOX::drawEntity(uint programID)
-// {
-//     for (unsigned int i = 0; i < this->children.size(); i++)
-//     {
-//         children[i]->drawEntity(programID);
-//     }
-// }
+void BBOX::drawEntity(uint programID)
+{
+    for (unsigned int i = 0; i < this->children.size(); i++)
+    {
+        children[i]->drawEntity(programID);
+    }
+}
 
 vec3 BBOX::getBbmin()
 {

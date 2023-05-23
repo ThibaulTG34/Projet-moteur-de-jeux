@@ -29,7 +29,7 @@ Terrain::Terrain(int resolution, int taille, float offset, const string path, co
     this->indices = this->Indices(resolution, taille, offset);
     this->texture = loadTexture2DFromFilePath(path);
     this->uvs = this->compute_uv(this->sommets);
-    this->mode = 1;
+    this->mode = mode;
     this->triangles = this->Triangles(this->indices);
 }
 
@@ -47,7 +47,7 @@ Terrain::Terrain(vector<vec3> sommets, vector<unsigned short> indices, float off
 
     this->texture = loadTexture2DFromFilePath(path);
     this->uvs = this->compute_uv(this->sommets);
-    this->mode = 1;
+    this->mode = mode;
     this->heightmap = loadTexture2DFromFilePath(heightmap_path);
     this->triangles = this->Triangles(this->indices);
 }

@@ -38,8 +38,8 @@ const unsigned int SCR_HEIGHT = 600;
 
 // camera
 glm::vec3 cameraPosNormal = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraPosLibre = glm::vec3(2.f, 3.f, 7.f);
-glm::vec3 cameraPosOrbit = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraPosLibre = glm::vec3(3.f, 3.f, 12.f);
+glm::vec3 cameraPosOrbit = glm::vec3(5.0f, 5.0f, 5.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -66,6 +66,11 @@ float lastFrame = 0.0f;
 float angle = 0.;
 float zoom = 1.;
 
+//Declaration des matrices
+glm::mat4 ModelMatrix;
+glm::mat4 ViewMatrix;
+glm::mat4 ProjectionMatrix;
+
 // Declaration des booleens
 bool collision = false;
 bool firstMouse = true;
@@ -74,6 +79,9 @@ bool isJumping = false;
 bool starting = false;
 bool horsZone = false;
 bool isColliding = false;
+bool normal_mode = false;
+bool free_mode = false;
+bool orbit_mode = false; 
 bool movePlan;
 
 // Autres variables utiles
@@ -83,21 +91,22 @@ int wait = 0;
 
 GLuint programScene;
 
-glm::mat4 ViewMatrix;
-glm::mat4 ProjectionMatrix;
-
 // Declaration des objets de la scene
 EntityRoot Racine;
 skybox Skybox;
 Entity head, right_leg, left_leg, right_arm, left_arm, bust, infinite_plane;
-BBOX rLegBox, lLegBox, obstBox;
-
+BBOX rLegBox, lLegBox, rocksBox;
 Terrain terrain1, terrain2, terrain3, terrain4, terrain5, terrain6;
 Entity left_leg_transform, right_leg_transform;
-cube Obstacle;
+Entity Rocks, Wood, Tree;
 
 // Declaration des textures
-string textureTerrain("mur.jpg");
+string textureTerrain("herbe.jpeg");
+string textureRoche("rock_text.jpeg");
+string textureBois("Image_0.jpeg");
+string textureArbre("gloss.jpg");
+string texturePeau("peau.jpeg");
+
 string heightmap("Heightmap_Rocky.png");
 
 // Positions initiales
@@ -113,12 +122,15 @@ int leftLeg_direction = 1;
 int rightLeg_direction = -1;
 
 // Parametres de construction de la skybox
-std::vector<std::string> faces = {"rainbow/rainbow_lf.png", "rainbow/rainbow_rt.png",
-                                  "rainbow/rainbow_up.png", "rainbow/rainbow_dn.png",
-                                  "rainbow/rainbow_ft.png", "rainbow/rainbow_bk.png"};
+std::vector<std::string> faces = {"skyhsky/skyhsky_lf.png", "skyhsky/skyhsky_rt.png",
+                                  "skyhsky/skyhsky_up.png", "skyhsky/skyhsky_dn.png",
+                                  "skyhsky/skyhsky_ft.png", "skyhsky/skyhsky_bk.png"};
 
-float skybox_size = 30.f;
+float skybox_size = 20.f;
 int skybox_mode = 2;
+
+
+
 
 int main(void)
 {
@@ -188,20 +200,17 @@ int main(void)
 
   Racine = EntityRoot();
   Skybox = skybox(faces, skybox_size, skybox_mode);
-  head = Entity("head.obj", "rock.png", 2, 1);
-  bust = Entity("bust.obj", "rock.png", 2, 1);
-  // bust.transform.updateRotationY(194);
+  head = Entity("head.obj", texturePeau, 2, 4);
+
+  bust = Entity("bust.obj", "rock.png", 2, 5);
   bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
   bust.transform.updateTranslate(position_character);
 
-  right_leg = Entity("right_leg.obj", "rock.png", 2, 1);
-  right_leg_transform = Entity();
+  right_leg = Entity("right_leg.obj", texturePeau, 2, 4);
+  left_leg = Entity("left_leg.obj", texturePeau, 2, 4);
 
-  left_leg = Entity("left_leg.obj", "rock.png", 2, 1);
-  left_leg_transform = Entity();
-
-  right_arm = Entity("right_arm.obj", "rock.png", 2, 1);
-  left_arm = Entity("left_arm.obj", "rock.png", 2, 1);
+  right_arm = Entity("right_arm.obj", texturePeau, 2, 4);
+  left_arm = Entity("left_arm.obj", texturePeau, 2, 4);
 
   infinite_plane = Entity();
   terrain1 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programScene);
@@ -224,14 +233,22 @@ int main(void)
   infinite_plane.addChildren(terrain5);
   infinite_plane.addChildren(terrain6);
 
-  Obstacle = cube(1, 0.4, 0.4, 0.4, 4);
-  obstBox = BBOX(Obstacle.sommets, vec3(0., 0., 0.));
-  // Obstacle.transform.updateTranslate(vec3(0, 0, 0));
-  obstBox.addChildren(Obstacle);
-  obstBox.transform.updateTranslate(vec3(-1, 0., 0.));
+  Rocks = Entity("untitled.obj", textureRoche, 2, 3);
+  Wood = Entity("wood_02.obj", textureBois, 2, 4);
+  Wood.transform.updateScaling(vec3(0.5, 0.5, 0.5));
+  Wood.transform.updateTranslate(vec3(-1.5, 0.5, 0.));
 
-  terrain2.addChildren(obstBox);
-  // Obstacle.transform.updateTranslate(vec3(0, 0, 0));
+  //Tree = Entity("50k-tree-2.OBJ", textureArbre, 2, 6);
+  //Tree.transform.updateScaling(vec3(0.1, 0.1, 0.1));
+
+  rocksBox = BBOX(Rocks.sommets, vec3(0.1, 0.1, 0.1));
+  rocksBox.addChildren(Rocks);
+  rocksBox.transform.updateScaling(vec3(0.7, 0.7, 0.7));
+  rocksBox.transform.updateTranslate(vec3(-1.2, 0.5, 0.));
+
+  terrain2.addChildren(rocksBox);
+  terrain1.addChildren(Wood);
+  terrain3.addChildren(Tree);
 
   float offset = terrain1.FindMaxZ();
   cout << "offset = " << offset << endl;
@@ -260,11 +277,8 @@ int main(void)
   rLegBox = BBOX(right_leg.sommets, vec3(0.1, 0.1, 0.1));
   lLegBox = BBOX(left_leg.sommets, vec3(0.1, 0.1, 0.1));
 
-  // right_leg_transform.addChildren(right_leg);
-  // left_leg_transform.addChildren(left_leg);
-
   rLegBox.addChildren(right_leg);
-  rLegBox.addChildren(left_leg);
+  lLegBox.addChildren(left_leg);
 
   bust.addChildren(rLegBox);
   bust.addChildren(lLegBox);
@@ -273,16 +287,14 @@ int main(void)
   bust.transform.updateTranslate(vec3(0.35, 0., 4.));
   bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
 
-  // left_leg_transform.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
-  // right_leg_transform.transform.updateTranslate(vec3(0.1, -0.2, 0.));
-
   glUseProgram(programScene);
   GLuint LightID = glGetUniformLocation(programScene, "LightPosition_worldspace");
 
   double lastTime = glfwGetTime();
   int nbFrames = 0;
 
-  ViewMatrix = glm::mat4(1.f);
+  ModelMatrix  = glm::mat4(1.f);
+  ViewMatrix =  glm::mat4(1.f);
   ProjectionMatrix = glm::mat4(1.f);
 
   do
@@ -299,8 +311,23 @@ int main(void)
     // Use our shader
     glUseProgram(programScene);
 
-    ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4 / (float)3, 0.1f, 100.f);
-    ViewMatrix = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
+    if(normal_mode){
+        ModelMatrix = glm::rotate(ModelMatrix, rotation_speed, glm::vec3(0., 1., 0.));
+        ViewMatrix = glm::lookAt(cameraPosNormal, cameraTarget, cameraUp);
+        ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4/(float)3, 0.1f, 100.f);
+    }
+
+    if(free_mode){
+        ModelMatrix = glm::mat4(1.f);
+        ViewMatrix = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
+        ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4/(float)3, 0.1f, 100.f);
+    }
+
+    if(orbit_mode){
+        ModelMatrix = glm::mat4(1.f);
+        ViewMatrix = glm::lookAt(cameraPosOrbit, cameraOrbitTarget, cameraUp);
+        ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4/(float)3, 0.1f, 100.f);
+    }
 
     Racine.updateSelfAndChild();
     Racine.drawEntity(programScene);
@@ -346,7 +373,7 @@ int main(void)
     cout << lLegBox.getBbmin().x - infinite_plane.transform.position.x << endl;
 
     // Collision sur l'axe Y,Z
-    if (terrain2.transform.position.z > rLegBox.getBbmin().z + bust.transform.position.z + 1 - 0.4 && !isColliding && bust.transform.position.y < obstBox.transform.position.y + 0.2 && (/* obstBox.getBbmin().x <= rLegBox.getBbmax().x - infinite_plane.transform.position.x <= obstBox.getBbmax().x ||  */obstBox.getBbmin().x <= lLegBox.getBbmin().x - infinite_plane.transform.position.x <= obstBox.getBbmax().x))
+    if (terrain2.transform.position.z > rLegBox.getBbmin().z + bust.transform.position.z + 1 - 0.4 && !isColliding && bust.transform.position.y < rocksBox.transform.position.y + 0.2 && (/* rocksBox.getBbmin().x <= rLegBox.getBbmax().x - infinite_plane.transform.position.x <= rocksBox.getBbmax().x ||  */rocksBox.getBbmin().x <= lLegBox.getBbmin().x - infinite_plane.transform.position.x <= rocksBox.getBbmax().x))
     {
       cout << "collision" << endl;
       // isColliding = true;
@@ -379,29 +406,29 @@ int main(void)
       bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
     }
 
-    // if (wait % 10 == 0 && !isJumping && starting)
-    // {
+    if (wait % 10 == 0 && !isJumping && starting)
+    {
 
-    //   rLegBox.transform.identity();
-    //   rLegBox.transform.updateRotationX(rightLeg_angle);
-    //   rLegBox.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
+      rLegBox.transform.identity();
+      rLegBox.transform.updateRotationX(rightLeg_angle);
+      rLegBox.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
 
-    //   lLegBox.transform.identity();
-    //   lLegBox.transform.updateRotationX(leftLeg_angle);
-    //   lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+      lLegBox.transform.identity();
+      lLegBox.transform.updateRotationX(leftLeg_angle);
+      lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
 
-    //   leftLeg_angle += 5.0f * leftLeg_direction;
-    //   rightLeg_angle += 5.0f * rightLeg_direction;
+      leftLeg_angle += 5.0f * leftLeg_direction;
+      rightLeg_angle += 5.0f * rightLeg_direction;
 
-    //   if (leftLeg_angle >= 5.0f || leftLeg_angle <= -1.0f)
-    //   {
-    //     leftLeg_direction *= -1;
-    //   }
-    //   if (rightLeg_angle >= 5.0f || rightLeg_angle <= -1.0f)
-    //   {
-    //     rightLeg_direction *= -1;
-    //   }
-    // }
+      if (leftLeg_angle >= 5.0f || leftLeg_angle <= -1.0f)
+      {
+        leftLeg_direction *= -1;
+      }
+      if (rightLeg_angle >= 5.0f || rightLeg_angle <= -1.0f)
+      {
+        rightLeg_direction *= -1;
+      }
+    }
 
     wait++;
 
@@ -427,6 +454,62 @@ void processInput(GLFWwindow *window)
     glfwSetWindowShouldClose(window, true);
 
   float cameraSpeed = static_cast<float>(3.5 * deltaTime);
+
+  if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS){
+      normal_mode = true;
+      free_mode = false;
+      orbit_mode = false;
+  }
+
+  if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS){
+      normal_mode = false;
+      free_mode = true;
+      orbit_mode = false;
+  }
+
+  if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS){
+      normal_mode = false;
+      free_mode = false;
+      orbit_mode = true;
+  }
+
+  if(normal_mode){
+      if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
+          cameraPosNormal.y = cameraPosNormal.z;
+          ViewMatrix = glm::lookAt(cameraPosNormal, cameraTarget, cameraUp);
+          glUniformMatrix4fv(glGetUniformLocation(programScene, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
+      }
+      if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+          rotation_speed += 0.01;
+      if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+          rotation_speed -= 0.01;
+  }
+
+  if(free_mode){
+      if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+          cameraPosLibre -= cameraSpeed * cameraFront;
+      if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+          cameraPosLibre += cameraSpeed * cameraFront;
+      if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+          cameraPosLibre -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+          cameraPosLibre += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+      if(glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+          cameraPosLibre += cameraSpeed * cameraUp;
+      if(glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+          cameraPosLibre -= cameraSpeed * cameraUp;
+  }
+
+  if(orbit_mode){
+      if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+          cameraPosOrbit += glm::normalize(cameraUp) * cameraSpeed;
+      if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+          cameraPosOrbit -= glm::normalize(cameraUp) * cameraSpeed;
+      if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+          cameraPosOrbit += glm::normalize(glm::cross(cameraOrbitTarget - cameraPosOrbit, cameraUp))*cameraSpeed;
+      if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+          cameraPosOrbit -= glm::normalize(glm::cross(cameraOrbitTarget - cameraPosOrbit, cameraUp))*cameraSpeed;
+  }
 
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
   {

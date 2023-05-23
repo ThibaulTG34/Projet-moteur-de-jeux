@@ -25,7 +25,6 @@ public :
 	EntityRoot* parent = nullptr;
 	vector<EntityRoot*> children;
 	int mode = 0;
-	int texturemode = 0;
 
 	EntityRoot();
 
@@ -41,7 +40,7 @@ public :
 
 	void bindBuffers();
 
-	/* virtual  */void drawEntity(uint programID);
+	virtual void drawEntity(uint programID);
 
 	void clearBuffers();
 
