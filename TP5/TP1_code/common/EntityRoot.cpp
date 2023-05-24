@@ -111,19 +111,24 @@ void EntityRoot::drawEntity(uint programID)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		if(this->mode == 1){
+		if (this->mode == 1)
+		{
 			glUniform1i(glGetUniformLocation(programID, "texture_terrain"), 0);
 		}
-		else if(this->mode == 3){
+		else if (this->mode == 3)
+		{
 			glUniform1i(glGetUniformLocation(programID, "texture_roche"), 0);
 		}
-		else if(this->mode == 4){
+		else if (this->mode == 4)
+		{
 			glUniform1i(glGetUniformLocation(programID, "texture_peau"), 0);
 		}
-		else if(this->mode == 5){
+		else if (this->mode == 5)
+		{
 			glUniform1i(glGetUniformLocation(programID, "texture_bois"), 0);
 		}
-		else if(this->mode == 6){
+		else if (this->mode == 6)
+		{
 			glUniform1i(glGetUniformLocation(programID, "texture_arbre"), 0);
 		}
 	}
@@ -151,7 +156,6 @@ void EntityRoot::drawEntity(uint programID)
 	for (unsigned int i = 0; i < this->children.size(); i++)
 	{
 		children[i]->drawEntity(programID);
-		
 	}
 }
 
@@ -160,4 +164,16 @@ void EntityRoot::clearBuffers()
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteBuffers(1, &indexbuffer);
 	glDeleteBuffers(1, &normalbuffer);
+}
+
+void EntityRoot::removeChildren(EntityRoot *child)
+{
+	for (unsigned int i = 0; i < this->children.size(); i++)
+	{
+		if (this->children[i] == child)
+		{
+			this->children[i]->parent == nullptr;
+			this->children.erase(this->children.begin() + i);
+		}
+	}
 }

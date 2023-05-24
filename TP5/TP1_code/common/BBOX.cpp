@@ -193,33 +193,14 @@ bool BBOX::CollisionBoxSphere(vec3 sphereCenter, float radius, vec3 point, vec3 
     float distance1 = length(closestPoint - transformedSphereCenter);
     float distance2 = length(closestPoint - transformedSphereCenter);
 
-    // cout << distance2 << endl;
-
     if (distance1 <= radius || distance2 <= radius)
     {
         return true;
     }
-
-    // glm::vec3 transformedPoint = glm::vec3(transformMatrix2 * glm::vec4(point + updatePos, 1.0f));
-
-    // vec3 spherePoint_vect = transformedPoint - transformedSphereCenter;
-    // spherePoint_vect = normalize(spherePoint_vect);
-
-    // spherePoint_vect *= radius;
-
-    // vec3 worldPoint = transformedSphereCenter + spherePoint_vect;
-
-    // vec3 closestPointSphere_vect = transformedSphereCenter - worldPoint;
-
-    // float dist_squared = length(closestPointSphere_vect);
-
-    // return dist_squared < radius * radius;
-
 }
 
-void BBOX::calculerSphereEnglobante(const std::vector<vec3> &points, vec3 &centre, double &rayon)
+void BBOX::calculerSphereEnglobante(std::vector<vec3> &points, vec3 &centre, double &rayon)
 {
-    // Calculer le centre de la sphère (moyenne des coordonnées des points)
     centre = {0.0, 0.0, 0.0};
     for (const auto &point : points)
     {
@@ -231,5 +212,50 @@ void BBOX::calculerSphereEnglobante(const std::vector<vec3> &points, vec3 &centr
     centre.y /= points.size();
     centre.z /= points.size();
 
-    cout << centre.x << ", " << centre.y << ", " << centre.z << endl;
+}
+
+void BBOX::MouvementPlayer(BBOX &lLegBox, BBOX &rLegBox, BBOX &lTibiaBox, BBOX &rTibiaBox, BBOX &rArmBox, BBOX &lArmBox, bool &pas)
+{
+    rLegBox.transform.identity();
+    lLegBox.transform.identity();
+    rTibiaBox.transform.identity();
+    rArmBox.transform.identity();
+    lArmBox.transform.identity();
+
+    if (pas)
+    {
+        // Mouvements bras
+        lArmBox.transform.updateTranslate(vec3(0, 0.4, -3.f));
+        lArmBox.transform.updateRotationX(radians(15.0));
+        rArmBox.transform.updateTranslate(vec3(0, 0.4, 3.f));
+        rArmBox.transform.updateRotationX(radians(-15.0));
+
+        // Mouvements jambes
+        rLegBox.transform.updateTranslate(vec3(0., 0.5, 3.5f));
+        rLegBox.transform.updateRotationX(radians(-25.0));
+        rTibiaBox.transform.updateTranslate(vec3(0, 0.5, 1.f));
+        rTibiaBox.transform.updateRotationX(radians(-25.0));
+
+        lLegBox.transform.updateTranslate(vec3(0., 0.5, -3.5f));
+        lLegBox.transform.updateRotationX(radians(25.0));
+        lTibiaBox.transform.identity();
+    }
+    else
+    {
+        // Mouvements bras
+        lArmBox.transform.updateTranslate(vec3(0, 0.4, 3.f));
+        lArmBox.transform.updateRotationX(radians(-15.0));
+        rArmBox.transform.updateTranslate(vec3(0, 0.4, -3.f));
+        rArmBox.transform.updateRotationX(radians(15.0));
+
+        // Mouvements jambes
+        rLegBox.transform.updateTranslate(vec3(0., 0.5, -3.5f));
+        rLegBox.transform.updateRotationX(radians(25.0));
+        rTibiaBox.transform.identity();
+
+        lLegBox.transform.updateTranslate(vec3(0., 0.5, 3.5f));
+        lLegBox.transform.updateRotationX(radians(-25.0));
+        lTibiaBox.transform.updateTranslate(vec3(0, 0.1, -0.4f));
+        lTibiaBox.transform.updateRotationX(radians(20.0));
+    }
 }

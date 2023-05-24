@@ -87,6 +87,7 @@ bool normal_mode = false;
 bool free_mode = false;
 bool orbit_mode = false;
 bool movePlan;
+bool pas = true;
 
 // Autres variables utiles
 float ismoving = 0.05;
@@ -98,18 +99,19 @@ GLuint programScene;
 // Declaration des objets de la scene
 EntityRoot Racine;
 skybox Skybox;
-Entity head, right_leg, left_leg, right_arm, left_arm, bust, infinite_plane;
-BBOX rLegBox, lLegBox, rocksBox;
-Terrain terrain1, terrain2, terrain3, terrain4, terrain5, terrain6;
+Entity head, right_leg, left_leg, right_arm, left_arm, right_tibia, left_tibia, bust, infinite_plane;
+BBOX rLegBox, lLegBox, rocksBox, lArmBox, rArmBox, rTibiaBox, lTibiaBox, bustBox, BOXbox, boxbox;
+Terrain terrain1, terrain2, terrain3, terrain4, terrain5, terrain6, terrain7, terrain8;
 Entity left_leg_transform, right_leg_transform;
-Entity Rocks, Wood, Tree;
-Entity coin1;
-Sphere coin_box;
+Entity Rocks, Wood, Tree, BOX, box;
+Entity coin1, coin2, coin3;
+BBOX coin_box1, coin_box2, coin_box3;
+vector<BBOX> coins;
 
 // Declaration des textures
 string textureTerrain("herbe.jpeg");
 string textureRoche("rock_text.jpeg");
-string textureBois("Image_0.jpeg");
+string textureBois("material.png");
 string textureArbre("gloss.jpg");
 string texturePeau("peau.jpeg");
 string textureCoin("cointexture.jpg");
@@ -132,8 +134,10 @@ int rightLeg_direction = -1;
 std::vector<std::string> faces = {"skyhsky/skyhsky_lf.png", "skyhsky/skyhsky_rt.png",
                                   "skyhsky/skyhsky_up.png", "skyhsky/skyhsky_dn.png",
                                   "skyhsky/skyhsky_ft.png", "skyhsky/skyhsky_bk.png"};
-
-float skybox_size = 20.f;
+std::vector<std::string> faces2 = {"shine/left.png", "shine/right.png",
+                                   "shine/up.png", "shine/down.png",
+                                   "shine/front.png", "shine/back.png"};
+float skybox_size = 50.f;
 int skybox_mode = 2;
 
 int main(void)
@@ -203,15 +207,19 @@ int main(void)
   programScene = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
 
   Racine = EntityRoot();
-  Skybox = skybox(faces, skybox_size, skybox_mode);
+  Skybox = skybox(faces2, skybox_size, skybox_mode);
   head = Entity("head.obj", texturePeau, 2, 4);
 
   bust = Entity("bust.obj", "rock.png", 2, 5);
-  bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
-  bust.transform.updateTranslate(position_character);
+  bustBox = BBOX(bust.sommets, vec3(0.1, 0.1, 0.1));
+  bustBox.transform.updateScaling(vec3(0.1, 0.1, 0.1));
+  bustBox.transform.updateTranslate(position_character);
+  bustBox.addChildren(bust);
 
-  right_leg = Entity("right_leg.obj", texturePeau, 2, 4);
-  left_leg = Entity("left_leg.obj", texturePeau, 2, 4);
+  right_leg = Entity("cuisse_droite.obj", texturePeau, 2, 4);
+  right_tibia = Entity("genou_tibia_droit.obj", texturePeau, 2, 4);
+  left_tibia = Entity("genou_tibia_droit.obj", texturePeau, 2, 4);
+  left_leg = Entity("cuisse_droite.obj", texturePeau, 2, 4);
 
   right_arm = Entity("right_arm.obj", texturePeau, 2, 4);
   left_arm = Entity("left_arm.obj", texturePeau, 2, 4);
@@ -229,6 +237,8 @@ int main(void)
   terrain4 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programScene);
   terrain5 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programScene);
   terrain6 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programScene);
+  terrain7 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programScene);
+  terrain8 = Terrain(16, 4, 2, textureTerrain, heightmap, 1, programScene);
 
   infinite_plane.addChildren(terrain1);
   infinite_plane.addChildren(terrain2);
@@ -236,24 +246,38 @@ int main(void)
   infinite_plane.addChildren(terrain4);
   infinite_plane.addChildren(terrain5);
   infinite_plane.addChildren(terrain6);
+  infinite_plane.addChildren(terrain7);
+  infinite_plane.addChildren(terrain8);
 
   Rocks = Entity("untitled.obj", textureRoche, 2, 3);
-  // Wood = Entity("wood_02.obj", textureBois, 2, 4);
 
   coin1 = Entity("coin.obj", textureCoin, 2, 4);
-  coin1.transform.updateScaling(vec3(0.6, 0.6, 0.6));
+  coin_box1 = BBOX(coin1.sommets, vec3(0., 0., 0.));
+  coin_box1.addChildren(coin1);
+  coin_box1.transform.updateScaling(vec3(0.3, 0.3, 0.3));
+  coin_box1.transform.updateTranslate(vec3(0, 2.5, -0));
+  terrain3.addChildren(coin_box1);
+
+  coin2 = Entity("coin.obj", textureCoin, 2, 4);
+  coin_box2 = BBOX(coin2.sommets, vec3(0., 0., 0.));
+  coin_box2.addChildren(coin2);
+  coin_box2.transform.updateScaling(vec3(0.3, 0.3, 0.3));
+  coin_box2.transform.updateTranslate(vec3(-2., 2.5, 10.));
+  terrain2.addChildren(coin_box2);
+
+  coin3 = Entity("coin.obj", textureCoin, 2, 4);
+  coin_box3 = BBOX(coin3.sommets, vec3(0., 0., 0.));
+  coin_box3.addChildren(coin3);
+  coin_box3.transform.updateScaling(vec3(0.3, 0.3, 0.3));
+  coin_box3.transform.updateTranslate(vec3(0, 2.5, -4));
+  terrain3.addChildren(coin_box3);
 
   rocksBox = BBOX(Rocks.sommets, vec3(0.1, 0.1, 0.1));
   rocksBox.addChildren(Rocks);
   rocksBox.transform.updateScaling(vec3(0.7, 0.7, 0.7));
   rocksBox.transform.updateTranslate(vec3(-1.2, 0.5, 0.));
 
-  coin_box = Sphere(coin1.sommets, 50, 50);
-  coin_box.addChildren(coin1);
-  coin_box.transform.updateTranslate(vec3(0.3, 0.5, 0.));
-
   terrain2.addChildren(rocksBox);
-  terrain4.addChildren(coin_box);
 
   float offset = terrain1.FindMaxZ();
   cout << "offset = " << offset << endl;
@@ -263,6 +287,8 @@ int main(void)
   vec3 pos4 = vec3(2, 0, -3 * offset - 6);
   vec3 pos5 = vec3(2, 0, -4 * offset - 8);
   vec3 pos6 = vec3(2, 0, -5 * offset - 10);
+  vec3 pos7 = vec3(2, 0, -6 * offset - 12);
+  vec3 pos8 = vec3(2, 0, -6 * offset - 14);
 
   terrain1.transform.updateTranslate(pos1);
   terrain2.transform.updateTranslate(pos2);
@@ -270,27 +296,47 @@ int main(void)
   terrain4.transform.updateTranslate(pos4);
   terrain5.transform.updateTranslate(pos5);
   terrain6.transform.updateTranslate(pos6);
+  terrain7.transform.updateTranslate(pos7);
+  terrain8.transform.updateTranslate(pos8);
 
   Racine.addChildren(Skybox);
-  Skybox.addChildren(bust);
+  Skybox.addChildren(bustBox);
   Skybox.addChildren(infinite_plane);
 
+  infinite_plane.transform.updateTranslate(vec3(0, 0, 8));
+
   bust.addChildren(head);
-  bust.addChildren(left_arm);
-  bust.addChildren(right_arm);
 
   rLegBox = BBOX(right_leg.sommets, vec3(0.1, 0.1, 0.1));
   lLegBox = BBOX(left_leg.sommets, vec3(0.1, 0.1, 0.1));
+  lArmBox = BBOX(left_arm.sommets, vec3(0.1, 0.1, 0.1));
+  rArmBox = BBOX(right_arm.sommets, vec3(0.1, 0.1, 0.1));
+  rTibiaBox = BBOX(right_tibia.sommets, vec3(0.1, 0.1, 0.1));
+  lTibiaBox = BBOX(left_tibia.sommets, vec3(0.1, 0.1, 0.1));
 
   rLegBox.addChildren(right_leg);
+  rTibiaBox.addChildren(right_tibia);
+  lTibiaBox.addChildren(left_tibia);
   lLegBox.addChildren(left_leg);
+
+  lArmBox.addChildren(left_arm);
+  rArmBox.addChildren(right_arm);
+
+  bust.addChildren(lArmBox);
+  bust.addChildren(rArmBox);
+  right_leg.addChildren(rTibiaBox);
+  left_leg.addChildren(lTibiaBox);
 
   bust.addChildren(rLegBox);
   bust.addChildren(lLegBox);
 
-  bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
-  bust.transform.updateTranslate(vec3(0.35, 0., 4.));
-  bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
+  bustBox.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
+  bustBox.transform.updateTranslate(vec3(0.35, 0., 8.5));
+  bustBox.transform.updateScaling(vec3(0.1, 0.1, 0.1));
+
+  left_tibia.transform.updateTranslate(vec3(1.85, 0, 0.));
+  left_tibia.transform.updateRotationY(radians(180.0));
+  left_leg.transform.updateRotationY(radians(180.0));
 
   glUseProgram(programScene);
   GLuint LightID = glGetUniformLocation(programScene, "LightPosition_worldspace");
@@ -340,62 +386,28 @@ int main(void)
     Racine.updateSelfAndChild();
     Racine.drawEntity(programScene);
 
-    if (movePlan)
-    {
-      if (!isColliding)
-      {
-        terrain1.transform.updateTranslate(vec3(0, 0, ismoving));
-        terrain2.transform.updateTranslate(vec3(0, 0, ismoving));
-        terrain3.transform.updateTranslate(vec3(0, 0, ismoving));
-        terrain4.transform.updateTranslate(vec3(0, 0, ismoving));
-        terrain5.transform.updateTranslate(vec3(0, 0, ismoving));
-        terrain6.transform.updateTranslate(vec3(0, 0, ismoving));
-      }
-    }
+    // Plan infini
+    terrain1.InfinitePlane(terrain1, terrain2, terrain3, terrain4, terrain5, terrain6, terrain7, terrain8, movePlan, isColliding, ismoving, bust, pos8);
 
-    if (!isColliding)
-    {
-      if (terrain1.transform.position.z - 2.5 > bust.transform.position.z)
-      {
-        terrain1.transform.updateTranslate(vec3(0, 0, pos6.z));
-      }
-      if (terrain2.transform.position.z - 2.5 > bust.transform.position.z)
-      {
-        terrain2.transform.updateTranslate(vec3(0, 0, pos6.z));
-      }
-      if (terrain3.transform.position.z - 2.5 > bust.transform.position.z)
-      {
-        terrain3.transform.updateTranslate(vec3(0, 0, pos6.z));
-      }
-      if (terrain4.transform.position.z - 2.5 > bust.transform.position.z)
-      {
-        terrain4.transform.updateTranslate(vec3(0, 0, pos6.z));
-      }
-      if (terrain5.transform.position.z - 2.5 > bust.transform.position.z)
-      {
-        terrain5.transform.updateTranslate(vec3(0, 0, pos6.z));
-      }
-      if (terrain6.transform.position.z - 2.5 > bust.transform.position.z)
-      {
-        terrain6.transform.updateTranslate(vec3(0, 0, pos6.z));
-      }
-    }
-
+    // Tests collisions
     if (rLegBox.CollisionBoxBox(rLegBox.getBbmin() + vec3(infinite_plane.transform.position.x, 0, 0), rLegBox.getBbmax() + vec3(infinite_plane.transform.position.x, 0, 0), rocksBox.getBbmin(), rocksBox.getBbmax(), rLegBox.transform.ModelMatrix, rocksBox.transform.ModelMatrix) || rLegBox.CollisionBoxBox(lLegBox.getBbmin() + vec3(infinite_plane.transform.position.x, 0, 0), lLegBox.getBbmax() + vec3(infinite_plane.transform.position.x, 0, 0), rocksBox.getBbmin(), rocksBox.getBbmax(), lLegBox.transform.ModelMatrix, rocksBox.transform.ModelMatrix))
     {
       isColliding = true;
       infinite_plane.transform.updateTranslate(vec3(0, 0, -2));
     }
-
-    // for (int i = 0; i < rLegBox.sommets.size(); i++)
-    // {
-    //   if (rLegBox.CollisionBoxSphere(coin_box.transform.position, coin_box.getRayon(), rLegBox.sommets[i], vec3(infinite_plane.transform.position.x, 0, 0), coin_box.transform.ModelMatrix, rLegBox.transform.ModelMatrix) || lLegBox.CollisionBoxSphere(coin_box.transform.position, coin_box.getRayon(), lLegBox.sommets[i], vec3(infinite_plane.transform.position.x, 0, 0), coin_box.transform.ModelMatrix, lLegBox.transform.ModelMatrix))
-    //   {
-    //     cout << "collision" << endl;
-    //     isColliding = true;
-    //   }
-    // }
-
+    if (bustBox.CollisionBoxBox(bustBox.getBbmin() + vec3(infinite_plane.transform.position.x, 0, 0), bustBox.getBbmax() + vec3(infinite_plane.transform.position.x, 0, 0), coin_box1.getBbmin(), coin_box1.getBbmax(), bustBox.transform.ModelMatrix, coin_box1.transform.ModelMatrix))
+    {
+      coin_box1.parent->removeChildren(&coin_box1);
+    }
+    if (bustBox.CollisionBoxBox(bustBox.getBbmin() + vec3(infinite_plane.transform.position.x, 0, 0), bustBox.getBbmax() + vec3(infinite_plane.transform.position.x, 0, 0), coin_box2.getBbmin(), coin_box2.getBbmax(), bustBox.transform.ModelMatrix, coin_box2.transform.ModelMatrix))
+    {
+      coin_box2.parent->removeChildren(&coin_box2);
+    }
+    if (bustBox.CollisionBoxBox(bustBox.getBbmin() + vec3(infinite_plane.transform.position.x, 0, 0), bustBox.getBbmax() + vec3(infinite_plane.transform.position.x, 0, 0), coin_box3.getBbmin(), coin_box3.getBbmax(), bustBox.transform.ModelMatrix, coin_box3.transform.ModelMatrix))
+    {
+      coin_box3.parent->removeChildren(&coin_box3);
+    }
+    
     if (collision)
     {
       vec3 velocity = speedVector + acceleration * deltaTime;
@@ -413,30 +425,12 @@ int main(void)
       bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
     }
 
-    if (wait % 10 == 0 && !isJumping && starting && !isColliding)
+    // animations joueur
+    if (wait % 30 == 0 && !isJumping && starting && !isColliding)
     {
-
-      rLegBox.transform.identity();
-      rLegBox.transform.updateTranslate(vec3(0., 0., 0.1f));
-      rLegBox.transform.updateRotationX(rightLeg_angle);
-
-      lLegBox.transform.identity();
-      lLegBox.transform.updateRotationX(leftLeg_angle);
-      // lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
-
-      leftLeg_angle += 5.0f * leftLeg_direction;
-      rightLeg_angle += 5.0f * rightLeg_direction;
-
-      if (leftLeg_angle >= 5.0f || leftLeg_angle <= -1.0f)
-      {
-        leftLeg_direction *= -1;
-      }
-      if (rightLeg_angle >= 5.0f || rightLeg_angle <= -1.0f)
-      {
-        rightLeg_direction *= -1;
-      }
+      rLegBox.MouvementPlayer(lLegBox, rLegBox, lTibiaBox, rTibiaBox, rArmBox, lArmBox, pas);
+      pas = !pas;
     }
-
     wait++;
 
     glUniformMatrix4fv(glGetUniformLocation(programScene, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
@@ -562,53 +556,6 @@ void processInput(GLFWwindow *window)
       collision = true;
       speedVector = vec3(0., 7 * sin(v0_angle), -7 * cos(v0_angle));
       position_during_jump = bust.transform.position;
-    }
-  }
-
-  // if(glfwGetKey(window, GLFW_KEY_))
-
-  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-  {
-
-    if (isJumping)
-    {
-      speedVector = vec3(0., 5 * sin(v0_angle), -5 * cos(v0_angle));
-      position_during_jump = bust.transform.position;
-      bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
-      bust.transform.updateRotationX(90.f);
-      bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
-      isJumping = false;
-    }
-
-    if (isCrounched)
-    {
-      bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
-      rLegBox.transform.identity();
-      lLegBox.transform.identity();
-      bust.transform.updateRotationX(-80.f);
-      rLegBox.transform.updateRotationX(80.f);
-      rLegBox.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
-      lLegBox.transform.updateRotationX(80.f);
-      lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
-      isCrounched = false;
-      bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
-    }
-  }
-
-  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-  {
-    if (!isCrounched)
-    {
-      bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
-      rLegBox.transform.identity();
-      lLegBox.transform.identity();
-      bust.transform.updateRotationX(80.f);
-      rLegBox.transform.updateRotationX(-80.f);
-      rLegBox.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
-      lLegBox.transform.updateRotationX(-80.f);
-      lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
-      isCrounched = true;
-      bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
     }
   }
 

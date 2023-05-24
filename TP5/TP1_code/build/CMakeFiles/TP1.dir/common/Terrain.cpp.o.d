@@ -274,4 +274,5 @@ CMakeFiles/TP1.dir/common/Terrain.cpp.o: \
  /home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/common/Terrain.h \
  /home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/common/Transform.h \
  /home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/common/EntityRoot.h \
+ /home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/common/Entity.h \
  /home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/common/texture.hpp

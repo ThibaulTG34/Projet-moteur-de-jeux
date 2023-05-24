@@ -143,15 +143,63 @@ std::vector<vec2> Terrain::compute_uv(vector<vec3> vertices)
     vector<vec2> UVs;
     for (unsigned int i = 0; i < vertices.size(); i++)
     {
-        UVs.push_back(vec2(vertices[i].x /2, vertices[i].z / 7));
+        UVs.push_back(vec2(vertices[i].x / 2, vertices[i].z / 7));
     }
     return UVs;
 }
 
-void Terrain::InfinitePlane(float offset)
+void Terrain::InfinitePlane(Terrain &terrain1, Terrain &terrain2, Terrain &terrain3, Terrain &terrain4,
+                            Terrain &terrain5, Terrain &terrain6, Terrain &terrain7, Terrain &terrain8,
+                            bool &movePlan, bool &isColliding, float &ismoving, Entity &bust, vec3 pos8)
 {
-    for (size_t i = 0; i < this->sommets.size(); i++)
+    if (movePlan)
     {
-        this->sommets[i].z -= offset;
+        if (!isColliding)
+        {
+            terrain1.transform.updateTranslate(vec3(0, 0, ismoving));
+            terrain2.transform.updateTranslate(vec3(0, 0, ismoving));
+            terrain3.transform.updateTranslate(vec3(0, 0, ismoving));
+            terrain4.transform.updateTranslate(vec3(0, 0, ismoving));
+            terrain5.transform.updateTranslate(vec3(0, 0, ismoving));
+            terrain6.transform.updateTranslate(vec3(0, 0, ismoving));
+            terrain7.transform.updateTranslate(vec3(0, 0, ismoving));
+            terrain8.transform.updateTranslate(vec3(0, 0, ismoving));
+        }
+    }
+
+    if (!isColliding)
+    {
+        if (terrain1.transform.position.z - 2.5 > bust.transform.position.z)
+        {
+            terrain1.transform.updateTranslate(vec3(0, 0, pos8.z));
+        }
+        if (terrain2.transform.position.z - 2.5 > bust.transform.position.z)
+        {
+            terrain2.transform.updateTranslate(vec3(0, 0, pos8.z));
+        }
+        if (terrain3.transform.position.z - 2.5 > bust.transform.position.z)
+        {
+            terrain3.transform.updateTranslate(vec3(0, 0, pos8.z));
+        }
+        if (terrain4.transform.position.z - 2.5 > bust.transform.position.z)
+        {
+            terrain4.transform.updateTranslate(vec3(0, 0, pos8.z));
+        }
+        if (terrain5.transform.position.z - 2.5 > bust.transform.position.z)
+        {
+            terrain5.transform.updateTranslate(vec3(0, 0, pos8.z));
+        }
+        if (terrain6.transform.position.z - 2.5 > bust.transform.position.z)
+        {
+            terrain6.transform.updateTranslate(vec3(0, 0, pos8.z));
+        }
+        if (terrain7.transform.position.z - 2.5 > bust.transform.position.z)
+        {
+            terrain7.transform.updateTranslate(vec3(0, 0, pos8.z));
+        }
+        if (terrain8.transform.position.z - 2.5 > bust.transform.position.z)
+        {
+            terrain8.transform.updateTranslate(vec3(0, 0, pos8.z));
+        }
     }
 }

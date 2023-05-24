@@ -320,6 +320,7 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: ../TP1/TP1.cpp \
   ../common/EntityRoot.h \
   ../common/Sphere.h \
   ../common/Terrain.h \
+  ../common/Entity.h \
   ../common/objloader.hpp \
   ../common/shader.hpp \
   ../common/skybox.h \
@@ -1931,6 +1932,7 @@ CMakeFiles/TP1.dir/common/Terrain.cpp.o: ../common/Terrain.cpp \
   ../common/Terrain.h \
   ../common/Transform.h \
   ../common/EntityRoot.h \
+  ../common/Entity.h \
   ../common/texture.hpp
 
 CMakeFiles/TP1.dir/common/Transform.cpp.o: ../common/Transform.cpp \
@@ -3087,62 +3089,7 @@ CMakeFiles/TP1.dir/common/objloader.cpp.o: ../common/objloader.cpp \
   ../external/glm-0.9.7.1/glm/integer.hpp \
   ../external/glm-0.9.7.1/glm/detail/func_integer.hpp \
   ../external/glm-0.9.7.1/glm/detail/func_integer.inl \
-  ../common/objloader.hpp \
-  /usr/include/assimp/Importer.hpp \
-  /usr/include/assimp/types.h \
-  /usr/include/assimp/defs.h \
-  /usr/include/assimp/config.h \
-  /usr/include/assimp/vector2.h \
-  /usr/include/assimp/vector3.h \
-  /usr/include/assimp/color4.h \
-  /usr/include/assimp/matrix3x3.h \
-  /usr/include/assimp/matrix4x4.h \
-  /usr/include/assimp/quaternion.h \
-  /usr/include/assimp/vector2.inl \
-  /usr/include/assimp/vector3.inl \
-  /usr/include/assimp/color4.inl \
-  /usr/include/assimp/matrix3x3.inl \
-  /usr/include/c++/11/algorithm \
-  /usr/include/c++/11/utility \
-  /usr/include/c++/11/bits/stl_relops.h \
-  /usr/include/c++/11/bits/stl_algo.h \
-  /usr/include/c++/11/bits/algorithmfwd.h \
-  /usr/include/c++/11/bits/stl_heap.h \
-  /usr/include/c++/11/bits/stl_tempbuf.h \
-  /usr/include/c++/11/bits/uniform_int_dist.h \
-  /usr/include/c++/11/pstl/glue_algorithm_defs.h \
-  /usr/include/c++/11/functional \
-  /usr/include/c++/11/tuple \
-  /usr/include/c++/11/array \
-  /usr/include/c++/11/bits/uses_allocator.h \
-  /usr/include/c++/11/bits/invoke.h \
-  /usr/include/c++/11/bits/refwrap.h \
-  /usr/include/c++/11/bits/std_function.h \
-  /usr/include/c++/11/unordered_map \
-  /usr/include/c++/11/ext/aligned_buffer.h \
-  /usr/include/c++/11/bits/hashtable.h \
-  /usr/include/c++/11/bits/hashtable_policy.h \
-  /usr/include/c++/11/bits/enable_special_members.h \
-  /usr/include/c++/11/bits/node_handle.h \
-  /usr/include/c++/11/bits/unordered_map.h \
-  /usr/include/c++/11/bits/erase_if.h \
-  /usr/include/c++/11/pstl/execution_defs.h \
-  /usr/include/assimp/matrix4x4.inl \
-  /usr/include/assimp/MathFunctions.h \
-  /usr/include/assimp/quaternion.inl \
-  /usr/include/assimp/scene.h \
-  /usr/include/assimp/texture.h \
-  /usr/include/assimp/Compiler/pushpack1.h \
-  /usr/include/assimp/Compiler/poppack1.h \
-  /usr/include/assimp/mesh.h \
-  /usr/include/assimp/aabb.h \
-  /usr/include/assimp/light.h \
-  /usr/include/assimp/camera.h \
-  /usr/include/assimp/material.h \
-  /usr/include/assimp/material.inl \
-  /usr/include/assimp/anim.h \
-  /usr/include/assimp/metadata.h \
-  /usr/include/assimp/postprocess.h
+  ../common/objloader.hpp
 
 CMakeFiles/TP1.dir/common/shader.cpp.o: ../common/shader.cpp \
   /usr/include/stdc-predef.h \
@@ -4162,28 +4109,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/c++/11/map:
 
-/usr/include/assimp/postprocess.h:
-
-/usr/include/assimp/metadata.h:
-
-/usr/include/assimp/anim.h:
-
-/usr/include/assimp/material.inl:
-
-/usr/include/assimp/camera.h:
-
-/usr/include/assimp/mesh.h:
-
-/usr/include/assimp/Compiler/pushpack1.h:
-
-/usr/include/assimp/texture.h:
-
-/usr/include/assimp/scene.h:
-
-/usr/include/assimp/quaternion.inl:
-
-/usr/include/assimp/MathFunctions.h:
-
 /usr/include/c++/11/bits/unordered_map.h:
 
 /usr/include/c++/11/bits/hashtable_policy.h:
@@ -4203,24 +4128,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 /usr/include/c++/11/bits/algorithmfwd.h:
 
 /usr/include/c++/11/algorithm:
-
-/usr/include/assimp/matrix3x3.inl:
-
-/usr/include/assimp/color4.inl:
-
-/usr/include/assimp/vector3.inl:
-
-/usr/include/assimp/vector2.inl:
-
-/usr/include/assimp/quaternion.h:
-
-/usr/include/assimp/matrix4x4.h:
-
-/usr/include/assimp/matrix3x3.h:
-
-/usr/include/assimp/vector2.h:
-
-/usr/include/assimp/defs.h:
 
 /usr/include/c++/11/sstream:
 
@@ -4259,8 +4166,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 ../common/vboindexer.hpp:
 
 ../common/objloader.hpp:
-
-/usr/include/assimp/light.h:
 
 ../common/Terrain.h:
 
@@ -4462,8 +4367,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h:
 
-/usr/include/assimp/types.h:
-
 /usr/include/c++/11/exception:
 
 /usr/include/c++/11/cstdint:
@@ -4486,15 +4389,11 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
-/usr/include/assimp/config.h:
-
 /usr/include/c++/11/tr1/gamma.tcc:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
-
-/usr/include/assimp/Importer.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
@@ -4578,8 +4477,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/c++/11/cwchar:
 
-/usr/include/assimp/vector3.h:
-
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h:
 
 /usr/include/c++/11/bits/stl_algobase.h:
@@ -4611,8 +4508,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 ../common/texture.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
-
-/usr/include/assimp/matrix4x4.inl:
 
 ../external/glm-0.9.7.1/glm/gtc/constants.hpp:
 
@@ -4738,8 +4633,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/c++/11/bits/locale_classes.tcc:
 
-/usr/include/assimp/material.h:
-
 /usr/include/c++/11/bits/node_handle.h:
 
 /usr/include/c++/11/iostream:
@@ -4796,8 +4689,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /usr/include/c++/11/bits/locale_facets.tcc:
 
-/usr/include/assimp/aabb.h:
-
 /usr/include/c++/11/bits/enable_special_members.h:
 
 /usr/include/c++/11/bits/codecvt.h:
@@ -4825,8 +4716,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 ../common/texture.cpp:
 
 ../external/glm-0.9.7.1/glm/vec3.hpp:
-
-/usr/include/assimp/color4.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
 
@@ -4893,8 +4782,6 @@ CMakeFiles/TP1.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
-
-/usr/include/assimp/Compiler/poppack1.h:
 
 /usr/include/c++/11/bits/specfun.h:
 

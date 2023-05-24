@@ -36,7 +36,9 @@ public:
 
     bool CollisionBoxSphere(vec3 sphereCenter, float radius, vec3 point, vec3 updatePos, mat4 transformMatrix1, mat4 transformMatrix2);
 
-    void calculerSphereEnglobante(const std::vector<vec3> &points, vec3 &centre, double &rayon);
+    void calculerSphereEnglobante(std::vector<vec3> &points, vec3 &centre, double &rayon);
+
+    void MouvementPlayer(BBOX &lLegBox, BBOX &rLegBox, BBOX &lTibiaBox, BBOX &rTibiaBox, BBOX &rArmBox, BBOX &lArmBox, bool &pas);
 
 private:
     vec3 BBmin, BBmax;

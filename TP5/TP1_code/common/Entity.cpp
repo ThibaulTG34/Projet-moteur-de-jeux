@@ -37,13 +37,13 @@ Entity::Entity(const string path, const string textpath, int loading, int mode)
 		this->uvs = this->compute_uv(this->sommets);
 		this->mode = mode;
 	}
-	else if(loading == 1)
-	{
-		this->texture = loadTexture2DFromFilePath(textpath);
-		loadAssImp(path.c_str(), this->indices, this->sommets);
-		this->uvs = this->compute_uv(this->sommets);
-		this->mode = mode;
-	}
+	// else if(loading == 1)
+	// {
+	// 	this->texture = loadTexture2DFromFilePath(textpath);
+	// 	loadAssImp(path.c_str(), this->indices, this->sommets);
+	// 	this->uvs = this->compute_uv(this->sommets);
+	// 	this->mode = mode;
+	// }
 	else
 	{
 		this->texture = loadTexture2DFromFilePath(textpath);

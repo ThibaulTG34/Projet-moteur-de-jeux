@@ -12,7 +12,7 @@ using namespace glm;
 
 class EntityRoot
 {
-public :
+public:
 	std::vector<glm::vec3> sommets;
 	std::vector<glm::vec3> normales;
 	std::vector<unsigned short> indices;
@@ -22,8 +22,8 @@ public :
 	Transform transform;
 	uint texture, heightmap, sk;
 	uint vertexbuffer, indexbuffer, uvbuffer, normalbuffer;
-	EntityRoot* parent = nullptr;
-	vector<EntityRoot*> children;
+	EntityRoot *parent = nullptr;
+	vector<EntityRoot *> children;
 	int mode = 0;
 
 	EntityRoot();
@@ -43,7 +43,7 @@ public :
 	virtual void drawEntity(uint programID);
 
 	void clearBuffers();
-
+	void removeChildren(EntityRoot *child);
 };
 
 #endif
