@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/external/glew-1.13.0/src/glew.c" "external/CMakeFiles/GLEW_1130.dir/glew-1.13.0/src/glew.c.o" "gcc" "external/CMakeFiles/GLEW_1130.dir/glew-1.13.0/src/glew.c.o.d"
+  "/home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/external/glew-1.13.0/src/glew.c" "external/CMakeFiles/GLEW_1130.dir/glew-1.13.0/src/glew.c.o" "gcc" "external/CMakeFiles/GLEW_1130.dir/glew-1.13.0/src/glew.c.o.d"
   )
 
 # Targets to which this target links.

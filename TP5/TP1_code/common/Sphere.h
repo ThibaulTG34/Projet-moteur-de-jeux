@@ -9,15 +9,16 @@ using namespace glm;
 
 #include "EntityRoot.h"
 
-class Sphere:public EntityRoot{
+class Sphere : public EntityRoot
+{
 
 public:
-
 	vector<vector<vec3>> resolutions_vertices;
 	vector<vector<unsigned short>> resolutions_indices;
 	vector<vector<vec2>> resolutions_uvs;
 
 	Sphere();
+	Sphere(vector<vec3> vertices, int slices, int stacks);
 
 	Sphere(const string textpath, int slices, int stacks, float radius);
 
@@ -27,13 +28,13 @@ public:
 
 	void DifferentModel();
 
+	float getRayon();
+
 	void updateBuffers(vector<vec3> vertices, vector<unsigned short> indices, vector<vec2> uv);
+	void drawEntity(uint programID);
 
+private:
+	float rayon;
 };
-
-
-
-
-
 
 #endif

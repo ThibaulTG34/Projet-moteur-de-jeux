@@ -1,4 +1,4 @@
-# Install script for directory: /home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code
+# Install script for directory: /home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -44,7 +44,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/build/external/cmake_install.cmake")
+  include("/home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/build/external/cmake_install.cmake")
 
 endif()
 
@@ -56,5 +56,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/marie/Desktop/Git/Projet-moteur-de-jeux/TP5/TP1_code/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/thibault/Documents/Projet_MoteurGIT/Projet-moteur-de-jeux/TP5/TP1_code/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

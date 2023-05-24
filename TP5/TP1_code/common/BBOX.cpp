@@ -141,34 +141,6 @@ void BBOX::computeBBOXIndices()
     // return indices;
 }
 
-bool BBOX::Collision(vec3 pos1, vec3 size1, vec3 pos2, vec3 size2)
-{
-    vec3 halfSize1 = vec3(size1.x / 2, size1.y / 2, size1.z / 2);
-    vec3 halfSize2 = vec3(size2.x / 2, size2.y / 2, size2.z / 2);
-    // Calculate the distances between each pair of opposite faces
-    float dx = abs(pos1.x - pos2.x);
-    float dy = abs(pos1.y - pos2.y);
-    float dz = abs(pos1.z - pos2.z);
-
-    // Vérifier si les cubes se chevauchent sur l'axe x
-    if (dx <= halfSize1.x + halfSize2.x)
-    {
-        // Vérifier si les cubes se chevauchent sur l'axe y
-        if (dy <= halfSize1.y + halfSize2.y)
-        {
-            // Vérifier si les cubes se chevauchent sur l'axe z
-            if (dz <= halfSize1.z + halfSize2.z)
-            {
-                // Collision détectée
-                return true;
-            }
-        }
-    }
-
-    // Pas de collision détectée
-    return false;
-}
-
 void BBOX::drawEntity(uint programID)
 {
     for (unsigned int i = 0; i < this->children.size(); i++)
@@ -185,4 +157,79 @@ vec3 BBOX::getBbmin()
 vec3 BBOX::getBbmax()
 {
     return this->BBmax;
+}
+
+bool BBOX::CollisionBoxBox(vec3 minPoint1, vec3 maxPoint1, vec3 minPoint2, vec3 maxPoint2, mat4 transformMatrix1, mat4 transformMatrix2)
+{
+    glm::vec3 transformedMinPointLeg = glm::vec3(transformMatrix1 * glm::vec4(minPoint1, 1.0f));
+    glm::vec3 transformedMaxPointLeg = glm::vec3(transformMatrix1 * glm::vec4(maxPoint1, 1.0f));
+    glm::vec3 transformedMinPointCube = glm::vec3(transformMatrix2 * glm::vec4(minPoint2, 1.0f));
+    glm::vec3 transformedMaxPointCube = glm::vec3(transformMatrix2 * glm::vec4(maxPoint2, 1.0f));
+
+    if (transformedMinPointLeg.x > transformedMaxPointCube.x || transformedMaxPointLeg.x < transformedMinPointCube.x)
+    {
+        return false;
+    }
+    if (transformedMinPointLeg.y > transformedMaxPointCube.y || transformedMaxPointLeg.y < transformedMinPointCube.y)
+    {
+        return false;
+    }
+    if (transformedMinPointLeg.z > transformedMaxPointCube.z || transformedMaxPointLeg.z < transformedMinPointCube.z)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool BBOX::CollisionBoxSphere(vec3 sphereCenter, float radius, vec3 point, vec3 updatePos, mat4 transformMatrix1, mat4 transformMatrix2)
+{
+    glm::vec3 transformedSphereCenter = glm::vec3(transformMatrix1 * glm::vec4(sphereCenter, 1.0f));
+    glm::vec3 transformedMaxPoint = glm::vec3(transformMatrix2 * glm::vec4(point + updatePos, 1.0f));
+    glm::vec3 transformedMinPoint = glm::vec3(transformMatrix2 * glm::vec4(point + updatePos, 1.0f));
+
+    glm::vec3 closestPoint = glm::clamp(transformedSphereCenter, transformedMinPoint, transformedMaxPoint);
+
+    float distance1 = length(closestPoint - transformedSphereCenter);
+    float distance2 = length(closestPoint - transformedSphereCenter);
+
+    // cout << distance2 << endl;
+
+    if (distance1 <= radius || distance2 <= radius)
+    {
+        return true;
+    }
+
+    // glm::vec3 transformedPoint = glm::vec3(transformMatrix2 * glm::vec4(point + updatePos, 1.0f));
+
+    // vec3 spherePoint_vect = transformedPoint - transformedSphereCenter;
+    // spherePoint_vect = normalize(spherePoint_vect);
+
+    // spherePoint_vect *= radius;
+
+    // vec3 worldPoint = transformedSphereCenter + spherePoint_vect;
+
+    // vec3 closestPointSphere_vect = transformedSphereCenter - worldPoint;
+
+    // float dist_squared = length(closestPointSphere_vect);
+
+    // return dist_squared < radius * radius;
+
+}
+
+void BBOX::calculerSphereEnglobante(const std::vector<vec3> &points, vec3 &centre, double &rayon)
+{
+    // Calculer le centre de la sphère (moyenne des coordonnées des points)
+    centre = {0.0, 0.0, 0.0};
+    for (const auto &point : points)
+    {
+        centre.x += point.x;
+        centre.y += point.y;
+        centre.z += point.z;
+    }
+    centre.x /= points.size();
+    centre.y /= points.size();
+    centre.z /= points.size();
+
+    cout << centre.x << ", " << centre.y << ", " << centre.z << endl;
 }

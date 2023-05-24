@@ -15,6 +15,10 @@ GLFWwindow *window;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+// Include audio
+// #include <irrKlang/irrKlang.h>
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+
 using namespace glm;
 using namespace std;
 
@@ -66,7 +70,7 @@ float lastFrame = 0.0f;
 float angle = 0.;
 float zoom = 1.;
 
-//Declaration des matrices
+// Declaration des matrices
 glm::mat4 ModelMatrix;
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
@@ -81,7 +85,7 @@ bool horsZone = false;
 bool isColliding = false;
 bool normal_mode = false;
 bool free_mode = false;
-bool orbit_mode = false; 
+bool orbit_mode = false;
 bool movePlan;
 
 // Autres variables utiles
@@ -99,6 +103,8 @@ BBOX rLegBox, lLegBox, rocksBox;
 Terrain terrain1, terrain2, terrain3, terrain4, terrain5, terrain6;
 Entity left_leg_transform, right_leg_transform;
 Entity Rocks, Wood, Tree;
+Entity coin1;
+Sphere coin_box;
 
 // Declaration des textures
 string textureTerrain("herbe.jpeg");
@@ -106,6 +112,7 @@ string textureRoche("rock_text.jpeg");
 string textureBois("Image_0.jpeg");
 string textureArbre("gloss.jpg");
 string texturePeau("peau.jpeg");
+string textureCoin("cointexture.jpg");
 
 string heightmap("Heightmap_Rocky.png");
 
@@ -128,9 +135,6 @@ std::vector<std::string> faces = {"skyhsky/skyhsky_lf.png", "skyhsky/skyhsky_rt.
 
 float skybox_size = 20.f;
 int skybox_mode = 2;
-
-
-
 
 int main(void)
 {
@@ -234,21 +238,22 @@ int main(void)
   infinite_plane.addChildren(terrain6);
 
   Rocks = Entity("untitled.obj", textureRoche, 2, 3);
-  Wood = Entity("wood_02.obj", textureBois, 2, 4);
-  Wood.transform.updateScaling(vec3(0.5, 0.5, 0.5));
-  Wood.transform.updateTranslate(vec3(-1.5, 0.5, 0.));
+  // Wood = Entity("wood_02.obj", textureBois, 2, 4);
 
-  //Tree = Entity("50k-tree-2.OBJ", textureArbre, 2, 6);
-  //Tree.transform.updateScaling(vec3(0.1, 0.1, 0.1));
+  coin1 = Entity("coin.obj", textureCoin, 2, 4);
+  coin1.transform.updateScaling(vec3(0.6, 0.6, 0.6));
 
   rocksBox = BBOX(Rocks.sommets, vec3(0.1, 0.1, 0.1));
   rocksBox.addChildren(Rocks);
   rocksBox.transform.updateScaling(vec3(0.7, 0.7, 0.7));
   rocksBox.transform.updateTranslate(vec3(-1.2, 0.5, 0.));
 
+  coin_box = Sphere(coin1.sommets, 50, 50);
+  coin_box.addChildren(coin1);
+  coin_box.transform.updateTranslate(vec3(0.3, 0.5, 0.));
+
   terrain2.addChildren(rocksBox);
-  terrain1.addChildren(Wood);
-  terrain3.addChildren(Tree);
+  terrain4.addChildren(coin_box);
 
   float offset = terrain1.FindMaxZ();
   cout << "offset = " << offset << endl;
@@ -293,8 +298,8 @@ int main(void)
   double lastTime = glfwGetTime();
   int nbFrames = 0;
 
-  ModelMatrix  = glm::mat4(1.f);
-  ViewMatrix =  glm::mat4(1.f);
+  ModelMatrix = glm::mat4(1.f);
+  ViewMatrix = glm::mat4(1.f);
   ProjectionMatrix = glm::mat4(1.f);
 
   do
@@ -311,22 +316,25 @@ int main(void)
     // Use our shader
     glUseProgram(programScene);
 
-    if(normal_mode){
-        ModelMatrix = glm::rotate(ModelMatrix, rotation_speed, glm::vec3(0., 1., 0.));
-        ViewMatrix = glm::lookAt(cameraPosNormal, cameraTarget, cameraUp);
-        ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4/(float)3, 0.1f, 100.f);
+    if (normal_mode)
+    {
+      ModelMatrix = glm::rotate(ModelMatrix, rotation_speed, glm::vec3(0., 1., 0.));
+      ViewMatrix = glm::lookAt(cameraPosNormal, cameraTarget, cameraUp);
+      ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4 / (float)3, 0.1f, 100.f);
     }
 
-    if(free_mode){
-        ModelMatrix = glm::mat4(1.f);
-        ViewMatrix = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
-        ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4/(float)3, 0.1f, 100.f);
+    if (free_mode)
+    {
+      ModelMatrix = glm::mat4(1.f);
+      ViewMatrix = glm::lookAt(cameraPosLibre, cameraPosLibre + cameraFront, cameraUp);
+      ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4 / (float)3, 0.1f, 100.f);
     }
 
-    if(orbit_mode){
-        ModelMatrix = glm::mat4(1.f);
-        ViewMatrix = glm::lookAt(cameraPosOrbit, cameraOrbitTarget, cameraUp);
-        ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4/(float)3, 0.1f, 100.f);
+    if (orbit_mode)
+    {
+      ModelMatrix = glm::mat4(1.f);
+      ViewMatrix = glm::lookAt(cameraPosOrbit, cameraOrbitTarget, cameraUp);
+      ProjectionMatrix = glm::perspective(glm::radians(fov), (float)4 / (float)3, 0.1f, 100.f);
     }
 
     Racine.updateSelfAndChild();
@@ -334,9 +342,9 @@ int main(void)
 
     if (movePlan)
     {
-      terrain1.transform.updateTranslate(vec3(0, 0, ismoving));
-      if (cpt == 0)
+      if (!isColliding)
       {
+        terrain1.transform.updateTranslate(vec3(0, 0, ismoving));
         terrain2.transform.updateTranslate(vec3(0, 0, ismoving));
         terrain3.transform.updateTranslate(vec3(0, 0, ismoving));
         terrain4.transform.updateTranslate(vec3(0, 0, ismoving));
@@ -345,48 +353,47 @@ int main(void)
       }
     }
 
-    if (terrain1.transform.position.z - 2.5 > bust.transform.position.z)
+    if (!isColliding)
     {
-      terrain1.transform.updateTranslate(vec3(0, 0, pos6.z));
-    }
-    if (terrain2.transform.position.z - 2.5 > bust.transform.position.z)
-    {
-      terrain2.transform.updateTranslate(vec3(0, 0, pos6.z));
-    }
-    if (terrain3.transform.position.z - 2.5 > bust.transform.position.z)
-    {
-      terrain3.transform.updateTranslate(vec3(0, 0, pos6.z));
-    }
-    if (terrain4.transform.position.z - 2.5 > bust.transform.position.z)
-    {
-      terrain4.transform.updateTranslate(vec3(0, 0, pos6.z));
-    }
-    if (terrain5.transform.position.z - 2.5 > bust.transform.position.z)
-    {
-      terrain5.transform.updateTranslate(vec3(0, 0, pos6.z));
-    }
-    if (terrain6.transform.position.z - 2.5 > bust.transform.position.z)
-    {
-      terrain6.transform.updateTranslate(vec3(0, 0, pos6.z));
-    }
-
-    cout << lLegBox.getBbmin().x - infinite_plane.transform.position.x << endl;
-
-    // Collision sur l'axe Y,Z
-    if (terrain2.transform.position.z > rLegBox.getBbmin().z + bust.transform.position.z + 1 - 0.4 && !isColliding && bust.transform.position.y < rocksBox.transform.position.y + 0.2 && (/* rocksBox.getBbmin().x <= rLegBox.getBbmax().x - infinite_plane.transform.position.x <= rocksBox.getBbmax().x ||  */rocksBox.getBbmin().x <= lLegBox.getBbmin().x - infinite_plane.transform.position.x <= rocksBox.getBbmax().x))
-    {
-      cout << "collision" << endl;
-      // isColliding = true;
-      movePlan = false;
-      // bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
-      // bust.transform.updateTranslate(vec3(0, 0, 1));
-      // bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
-      // movePlan = true;
+      if (terrain1.transform.position.z - 2.5 > bust.transform.position.z)
+      {
+        terrain1.transform.updateTranslate(vec3(0, 0, pos6.z));
+      }
+      if (terrain2.transform.position.z - 2.5 > bust.transform.position.z)
+      {
+        terrain2.transform.updateTranslate(vec3(0, 0, pos6.z));
+      }
+      if (terrain3.transform.position.z - 2.5 > bust.transform.position.z)
+      {
+        terrain3.transform.updateTranslate(vec3(0, 0, pos6.z));
+      }
+      if (terrain4.transform.position.z - 2.5 > bust.transform.position.z)
+      {
+        terrain4.transform.updateTranslate(vec3(0, 0, pos6.z));
+      }
+      if (terrain5.transform.position.z - 2.5 > bust.transform.position.z)
+      {
+        terrain5.transform.updateTranslate(vec3(0, 0, pos6.z));
+      }
+      if (terrain6.transform.position.z - 2.5 > bust.transform.position.z)
+      {
+        terrain6.transform.updateTranslate(vec3(0, 0, pos6.z));
+      }
     }
 
-    // if ()
+    if (rLegBox.CollisionBoxBox(rLegBox.getBbmin() + vec3(infinite_plane.transform.position.x, 0, 0), rLegBox.getBbmax() + vec3(infinite_plane.transform.position.x, 0, 0), rocksBox.getBbmin(), rocksBox.getBbmax(), rLegBox.transform.ModelMatrix, rocksBox.transform.ModelMatrix) || rLegBox.CollisionBoxBox(lLegBox.getBbmin() + vec3(infinite_plane.transform.position.x, 0, 0), lLegBox.getBbmax() + vec3(infinite_plane.transform.position.x, 0, 0), rocksBox.getBbmin(), rocksBox.getBbmax(), lLegBox.transform.ModelMatrix, rocksBox.transform.ModelMatrix))
+    {
+      isColliding = true;
+      infinite_plane.transform.updateTranslate(vec3(0, 0, -2));
+    }
+
+    // for (int i = 0; i < rLegBox.sommets.size(); i++)
     // {
+    //   if (rLegBox.CollisionBoxSphere(coin_box.transform.position, coin_box.getRayon(), rLegBox.sommets[i], vec3(infinite_plane.transform.position.x, 0, 0), coin_box.transform.ModelMatrix, rLegBox.transform.ModelMatrix) || lLegBox.CollisionBoxSphere(coin_box.transform.position, coin_box.getRayon(), lLegBox.sommets[i], vec3(infinite_plane.transform.position.x, 0, 0), coin_box.transform.ModelMatrix, lLegBox.transform.ModelMatrix))
+    //   {
     //     cout << "collision" << endl;
+    //     isColliding = true;
+    //   }
     // }
 
     if (collision)
@@ -406,16 +413,16 @@ int main(void)
       bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
     }
 
-    if (wait % 10 == 0 && !isJumping && starting)
+    if (wait % 10 == 0 && !isJumping && starting && !isColliding)
     {
 
       rLegBox.transform.identity();
+      rLegBox.transform.updateTranslate(vec3(0., 0., 0.1f));
       rLegBox.transform.updateRotationX(rightLeg_angle);
-      rLegBox.transform.updateTranslate(vec3(0.1, -0.2f, 0.f));
 
       lLegBox.transform.identity();
       lLegBox.transform.updateRotationX(leftLeg_angle);
-      lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
+      // lLegBox.transform.updateTranslate(vec3(-0.05, -0.2, 0.));
 
       leftLeg_angle += 5.0f * leftLeg_direction;
       rightLeg_angle += 5.0f * rightLeg_direction;
@@ -455,60 +462,67 @@ void processInput(GLFWwindow *window)
 
   float cameraSpeed = static_cast<float>(3.5 * deltaTime);
 
-  if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS){
-      normal_mode = true;
-      free_mode = false;
-      orbit_mode = false;
+  if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+  {
+    normal_mode = true;
+    free_mode = false;
+    orbit_mode = false;
   }
 
-  if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS){
-      normal_mode = false;
-      free_mode = true;
-      orbit_mode = false;
+  if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+  {
+    normal_mode = false;
+    free_mode = true;
+    orbit_mode = false;
   }
 
-  if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS){
-      normal_mode = false;
-      free_mode = false;
-      orbit_mode = true;
+  if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+  {
+    normal_mode = false;
+    free_mode = false;
+    orbit_mode = true;
   }
 
-  if(normal_mode){
-      if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
-          cameraPosNormal.y = cameraPosNormal.z;
-          ViewMatrix = glm::lookAt(cameraPosNormal, cameraTarget, cameraUp);
-          glUniformMatrix4fv(glGetUniformLocation(programScene, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
-      }
-      if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-          rotation_speed += 0.01;
-      if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-          rotation_speed -= 0.01;
+  if (normal_mode)
+  {
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+    {
+      cameraPosNormal.y = cameraPosNormal.z;
+      ViewMatrix = glm::lookAt(cameraPosNormal, cameraTarget, cameraUp);
+      glUniformMatrix4fv(glGetUniformLocation(programScene, "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
+    }
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+      rotation_speed += 0.01;
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+      rotation_speed -= 0.01;
   }
 
-  if(free_mode){
-      if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-          cameraPosLibre -= cameraSpeed * cameraFront;
-      if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-          cameraPosLibre += cameraSpeed * cameraFront;
-      if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-          cameraPosLibre -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-          cameraPosLibre += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-      if(glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-          cameraPosLibre += cameraSpeed * cameraUp;
-      if(glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-          cameraPosLibre -= cameraSpeed * cameraUp;
+  if (free_mode)
+  {
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+      cameraPosLibre -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+      cameraPosLibre += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+      cameraPosLibre -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+      cameraPosLibre += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+      cameraPosLibre += cameraSpeed * cameraUp;
+    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+      cameraPosLibre -= cameraSpeed * cameraUp;
   }
 
-  if(orbit_mode){
-      if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-          cameraPosOrbit += glm::normalize(cameraUp) * cameraSpeed;
-      if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-          cameraPosOrbit -= glm::normalize(cameraUp) * cameraSpeed;
-      if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-          cameraPosOrbit += glm::normalize(glm::cross(cameraOrbitTarget - cameraPosOrbit, cameraUp))*cameraSpeed;
-      if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-          cameraPosOrbit -= glm::normalize(glm::cross(cameraOrbitTarget - cameraPosOrbit, cameraUp))*cameraSpeed;
+  if (orbit_mode)
+  {
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+      cameraPosOrbit += glm::normalize(cameraUp) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+      cameraPosOrbit -= glm::normalize(cameraUp) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+      cameraPosOrbit += glm::normalize(glm::cross(cameraOrbitTarget - cameraPosOrbit, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+      cameraPosOrbit -= glm::normalize(glm::cross(cameraOrbitTarget - cameraPosOrbit, cameraUp)) * cameraSpeed;
   }
 
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -537,18 +551,35 @@ void processInput(GLFWwindow *window)
   {
     starting = true;
     movePlan = true;
+    isColliding = false;
   }
 
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
   {
-    isJumping = true;
-    collision = true;
-    speedVector = vec3(0., 5 * sin(v0_angle), -5 * cos(v0_angle));
-    position_during_jump = bust.transform.position;
+    if (!isJumping)
+    {
+      isJumping = true;
+      collision = true;
+      speedVector = vec3(0., 7 * sin(v0_angle), -7 * cos(v0_angle));
+      position_during_jump = bust.transform.position;
+    }
   }
+
+  // if(glfwGetKey(window, GLFW_KEY_))
 
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
   {
+
+    if (isJumping)
+    {
+      speedVector = vec3(0., 5 * sin(v0_angle), -5 * cos(v0_angle));
+      position_during_jump = bust.transform.position;
+      bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));
+      bust.transform.updateRotationX(90.f);
+      bust.transform.updateScaling(vec3(0.1, 0.1, 0.1));
+      isJumping = false;
+    }
+
     if (isCrounched)
     {
       bust.transform.updateScaling(vec3(1 / 0.1, 1 / 0.1, 1 / 0.1));

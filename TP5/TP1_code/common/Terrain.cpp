@@ -88,7 +88,7 @@ std::vector<glm::vec3> Terrain::Vertices(int resolution, int taille, float offse
     {
         for (unsigned int j = 0; j < resolution; j++)
         {
-            glm::vec3 vertex = glm::vec3(((float)i * 2 / (float)(resolution - 1)) - offset, 0, ((float)j * 7 / (float)(resolution - 1)) - offset);
+            glm::vec3 vertex = glm::vec3(((float)i * 3 / (float)(resolution - 1)) - offset, 0, ((float)j * 7 / (float)(resolution - 1)) - offset);
             list_vertices.push_back(vertex);
         }
     }
